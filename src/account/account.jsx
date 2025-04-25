@@ -57,7 +57,7 @@ const Profile = () => {
   const getThemeColor = () => {
     const theme = state.user?.theme || 'dark';
     const themes = {
-      light: '#f5f5f5',
+      light: '#121212',
       dark: '#121212',
       blue: '#1e88e5',
       green: '#43a047',
