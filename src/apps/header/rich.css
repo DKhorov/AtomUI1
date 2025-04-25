@@ -1,0 +1,57 @@
+/* Rich Text Editor Styles */
+.rich-text-editor {
+    border: 1px solid #4a4a6a;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #2a2a3e;
+  }
+  
+  .rich-text-editor .toolbar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .rich-text-editor textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #4a4a6a;
+    background-color: #2a2a3e;
+    color: white;
+    resize: vertical;
+  }
+  
+  .image-preview {
+    position: relative;
+    margin: 10px 0;
+    border: 1px solid #4a4a6a;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+  }
+  
+  .remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .remove-image-btn:hover {
+    background: #cc0000;
+  }

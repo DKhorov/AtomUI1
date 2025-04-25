@@ -1,0 +1,34 @@
+<PostCreationPanel
+              title={title}
+              setTitle={setTitle}
+              text={text}
+              setText={setText}
+              postTags={postTags}
+              setPostTags={setPostTags}
+              imageUrl={imageUrl}
+              setImageUrl={setImageUrl}
+              isLoading={isLoading}
+              onSubmit={onSubmit}
+              showTextArea={showTextArea}
+              setShowTextArea={setShowTextArea}
+              showTagsInput={showTagsInput}
+              setShowTagsInput={setShowTagsInput}
+              showImageUpload={showImageUpload}
+              setShowImageUpload={setShowImageUpload}
+            />
+
+
+
+
+
+
+            <textarea
+              className="mobile-textarea"
+              value={editorRef.current?.getValue() || selectedDraft?.code || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (editorRef.current) editorRef.current.setValue(value);
+                if (selectedDraft) setSelectedDraft({...selectedDraft, code: value});
+              }}
+              placeholder="Введите код..."
+            />

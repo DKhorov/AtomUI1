@@ -1,0 +1,91 @@
+/* components/Modal.css */
+.modal-overlay-m {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content-m {
+  background: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  width: 88%;
+  max-width: 500px;
+  height: 65vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.sddd {
+  text-align: center;
+}
+
+.m-p-input {
+  padding: 15px;
+  background-color: #0D1116;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: solid 1px #31373F;
+  color: white;
+  margin-bottom: 10px;
+  border-radius: 50px;
+}
+
+.m-p-area {
+  padding:20px;
+  background-color: #0D1116;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: solid 1px #31373F;
+  color: white;
+  height: 50%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  resize: none;
+}
+
+.button-container-m {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+.add-photo-btn-m, .submit-btn-m {
+  padding: 12px 0;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+.add-photo-btn-m {
+  background-color: #31373F;
+  color: white;
+  
+}
+
+.add-photo-btn-m:hover {
+  background-color: #3d444e;
+}
+
+.submit-btn-m {
+  background-color: #1DA1F2;
+  color: white;
+}
+
+.submit-btn-m:hover {
+  background-color: #1a8cd8;
+}
