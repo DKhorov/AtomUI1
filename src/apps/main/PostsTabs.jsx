@@ -162,18 +162,7 @@ export const PostsTabs = ({
           )}
         </div>
       ) : activeTab === 'news' ? (
-        <div className="news-container">
-          <h2 className="news-title">Последние новости</h2>
-          <div className="news-updates">
-            <div className="update-item">
-              <span className="update-date">04.04.2025</span>
-              <p className="update-text">Запуск бета теста 2 до вторника</p>
-            </div>
-            <div className="update-item">
-              <span className="update-date">03.04.2025</span>
-              <p className="update-text">Чаты теперь раб но не раб</p>
-            </div>
-          </div>
+  
 
           <h2 className="news-title">Важные объявления</h2>
           {posts.items.filter(post => post.tags && post.tags.includes('alert')).length > 0 ? (
