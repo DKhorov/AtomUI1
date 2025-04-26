@@ -2,9 +2,14 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from '../../axios';
+import { keyframes } from '@emotion/react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import {
+  Box,
+  styled
+} from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'prism-react-renderer';
 import { themes } from 'prism-react-renderer';
 import { BookmarkBorder as BookmarkBorderIcon, Bookmark as BookmarkIcon } from '@mui/icons-material';
@@ -80,7 +85,25 @@ export const Post = ({
   const currentUserId = userData?._id || userData?.user?._id || userData?.user;
   const postAuthorId = user?._id || user;
   const isAuthor = currentUserId && postAuthorId && String(currentUserId) === String(postAuthorId);
-
+  const colors = {
+    primary: '#9147ff',
+    secondary: '#772ce8',
+    background: '#0d1117',
+    card: '#161b22',
+    text: '#c9d1d9',
+    accent: '#58a6ff'
+  };
+  
+  const CodeBlock = styled(Box)(({ theme }) => ({
+    backgroundColor: colors.card,
+    padding: theme.spacing(2),
+    borderRadius: '8px',
+    overflowX: 'auto',
+    fontFamily: 'monospace',
+    margin: theme.spacing(2, 0),
+    borderLeft: `4px solid ${colors.accent}`
+  }));
+  
   const [reactionData, setReactionData] = React.useState({
     likesCount,
     dislikesCount,
@@ -327,18 +350,11 @@ export const Post = ({
                 components={{
                   code({ node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        children={String(children).replace(/\n$/, '')}
-                        language={match[1]}
-                        style={themes.vscDarkPlus}
-                        PreTag="div"
-                        {...props}
-                      />
-                    ) : (
-                      <code className="inline-code" {...props}>
+                    return (
+                    
+                      <CodeBlock className="inline-code" {...props}>
                         {children}
-                      </code>
+                      </CodeBlock>
                     );
                   },
                   img: ({ node, ...props }) => (
