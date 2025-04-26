@@ -150,7 +150,7 @@ function Dock() {
     { id: 'about', text: 'О сервисе', icon: <RocketLaunchIcon /> },
     { id: 'features', text: 'Обновления', icon: <CodeIcon /> },
     { id: 'quick-start', text: 'Быстрый старт', icon: <RocketLaunchIcon /> },
-    { id: 'API', text: 'Праивла', icon: <LinkIcon /> },
+    { id: 'API', text: 'Правила', icon: <LinkIcon /> },
     { id: 'social', text: 'Соцсети', icon: <GroupIcon /> },
     { id: 'if-not-work', text: 'Если не работает', icon: <BugReportIcon /> },
     { id: 'thanks', text: 'Благодарности', icon: <GavelIcon /> }
