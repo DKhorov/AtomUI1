@@ -150,7 +150,7 @@ function Dock() {
     { id: 'about', text: 'О сервисе', icon: <RocketLaunchIcon /> },
     { id: 'features', text: 'Обновления', icon: <CodeIcon /> },
     { id: 'quick-start', text: 'Быстрый старт', icon: <RocketLaunchIcon /> },
-    { id: 'API', text: 'Правила', icon: <LinkIcon /> },
+    { id: 'API', text: 'Праивла', icon: <LinkIcon /> },
     { id: 'social', text: 'Соцсети', icon: <GroupIcon /> },
     { id: 'if-not-work', text: 'Если не работает', icon: <BugReportIcon /> },
     { id: 'thanks', text: 'Благодарности', icon: <GavelIcon /> }
@@ -384,7 +384,17 @@ return (
                 "Исправлены ошибки и баги, повышена стабильность работы платформы",
                 "Улучшен поиск по контенту для быстрого доступа к нужной информации"
               ]
+            },
+            {
+              icon: <CodeIcon color="primary" sx={{ fontSize: 30 }} />,
+              title: "Обновление 2.0",
+              items: [
+                "Новые профили как ТГ",
+                "Исправлены баги на главном экране",
+                "отображение сколько комментов на посту на главном экране"
+              ]
             }
+          
           
           ].map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
@@ -485,7 +495,6 @@ return (
             mt: 1,
             opacity: 0.8
           }}>
-            Откройте http://localhost:3000 в браузере
           </Typography>
         </Box>
       </Box>
