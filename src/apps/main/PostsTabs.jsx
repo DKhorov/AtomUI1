@@ -210,6 +210,7 @@ export const PostsTabs = ({
                 text={post.text}
                 tags={post.tags}
                 viewsCount={post.viewsCount}
+                commentsCount ={post.commentsCount}
                 user={post.user || {}}
                 createdAt={post.createdAt}
                 isEditable={userData?._id === (post.user?._id || null)}
