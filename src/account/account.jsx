@@ -7,7 +7,7 @@ import { Post } from '../apps/post/post';
 import { 
   Avatar, Button, Typography, Grid, CircularProgress,
   Badge, IconButton, Tooltip, Alert, Box, Divider,
-  Tabs, Tab, Fade
+  Tabs, Tab, Fade, Snackbar
 } from '@mui/material';
 import {
   Verified as VerifiedIcon,
@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { NotificationContext } from '../apps/tools/ui-menu/pushbar/pushbar';
 import '../style/profile/profile.scss';
+import { IoCopy } from "react-icons/io5";
 
 const Profile = () => {
   const { toggleNotifications } = useContext(NotificationContext);
@@ -47,6 +48,8 @@ const Profile = () => {
 
   const [activeTab, setActiveTab] = useState('posts');
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const getAvatarUrl = (avatarPath) => 
     avatarPath?.startsWith('http') ? avatarPath : `https://atomglidedev.ru${avatarPath || '/default-avatar.jpg'}`;
@@ -57,13 +60,23 @@ const Profile = () => {
   const getThemeColor = () => {
     const theme = state.user?.theme || 'dark';
     const themes = {
-      light: '#121212',
+      light: '#f5f5f5',
       dark: '#121212',
       blue: '#1e88e5',
       green: '#43a047',
       purple: '#8e24aa'
     };
     return themes[theme] || themes.dark;
+  };
+
+  const handleCopy = (text, message) => {
+    navigator.clipboard.writeText(text);
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   useEffect(() => {
@@ -81,7 +94,6 @@ const Profile = () => {
         const userData = profileRes.data?.user || profileRes.data;
         if (!userData?._id) throw new Error('Неверный формат данных пользователя');
 
-        // Проверка подписки текущего пользователя
         const isSubscribed = userData.followers?.some(follower => 
           (follower === currentUser?._id) || (follower._id === currentUser?._id)
         );
@@ -120,7 +132,6 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Обновляем состояние на основе предыдущего значения
       setState(prev => ({
         ...prev,
         isSubscribed: !prev.isSubscribed,
@@ -206,212 +217,202 @@ const Profile = () => {
         )}
       </div>
 
-      <div className="profile-info-section">
-        <div className="profile-avatar-container">
-          <Avatar 
-            alt={state.user.fullName} 
-            src={getAvatarUrl(state.user.avatarUrl)} 
-            sx={{ 
-              width: 150, 
-              height: 150,
-              border: '5px solid white',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-            }} 
-            className="profile-avatar" 
-          />
-        </div>
-
-        <div className="profile-text-info">
-          <div className='profile-name-container'>
-            <h1 className='profile-name'>{state.user.fullName}</h1>
-            {showVerifiedBadge && (
-              <VerifiedIcon className='verified-badge' color="primary" />
-            )}
-            {showVerifiedBadg && (
-              <VerifiedIcon className='verified-badge' color="primary" />
-            )}
-            {showShopBadge && (
-              <StoreIcon className='shop-badge' color="primary" />
-            )}
-          </div>
-          <p className="profile-email">@{state.user.username?.replace('@', '')}</p>
-          
-          <div className="profile-stats">
-            <div className="stat-item">
-              <span className="stat-number">{state.followersCount}</span>
-              <span className="stat-label">Подписчиков</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">{state.subscriptionsCount}</span>
-              <span className="stat-label">Подписок</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">{state.posts.length}</span>
-              <span className="stat-label">Постов</span>
-            </div>
+      <div className="csv">
+        <div className="profile-info-section">
+          <div className="profile-avatar-container">
+            <Avatar 
+              alt={state.user.fullName} 
+              src={getAvatarUrl(state.user.avatarUrl)} 
+              sx={{ 
+                width: 150, 
+                height: 150,
+                border: '5px solid white',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+              }} 
+              className="profile-avatar" 
+            />
           </div>
 
+          <div className="profile-text-info">
+            <div className='profile-name-container'>
+              <h1 className='profile-name'>{state.user.fullName}</h1>
+              {showVerifiedBadge && (
+                <VerifiedIcon className='verified-badge' color="primary" />
+              )}
+              {showVerifiedBadg && (
+                <VerifiedIcon className='verified-badge' color="primary" />
+              )}
+              {showShopBadge && (
+                <StoreIcon className='shop-badge' color="primary" />
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div className="profile-actions">
-        {isCurrentUser ? (
-          <>
-           <Button
-                variant="outlined"
-                startIcon={<EditIcon />}
-                onClick={() => navigate(`/edit-profile/${state.user._id}`)}
-                className="action-btn"
-              >
-                Редактировать
-              </Button>
-            
-          </>
-        ) : (
-          <Button
-            variant={state.isSubscribed ? "outlined" : "contained"}
-            startIcon={
-              state.isSubscribed ? <PersonRemoveIcon /> : <PersonAddIcon />
-            }
-            onClick={handleSubscribe}
-            className="subscribe-btn"
-          >
-            {state.isSubscribed ? 'Отписаться' : 'Подписаться'}
-          </Button>
-        )}
-      </div>
-
-      <div className="profile-tabs">
-        <Tabs 
-          value={activeTab} 
-          onChange={(e, newVal) => setActiveTab(newVal)}
-          indicatorColor="primary"
-          textColor="primary"
-          centered
-        >
-          <Tab label="Публикации" value="posts" />
-          <Tab label="О себе" value="about" />
-          <Tab label="Информация" value="info" />
-        </Tabs>
-      </div>
-
-      {/* Контент вкладок с полной заменой */}
-      <div className="tab-content">
-        {activeTab === 'posts' && (
-          <Fade in={activeTab === 'posts'} timeout={500}>
-            <div>
-              <div className="posts-section">
-                <h2 className="posts-title">{isCurrentUser ? 'Мои публикации' : 'Публикации'}</h2>
-                
-                {hasPosts ? (
-                  <Grid container spacing={3}>
-                    {state.posts.map(post => (
-                        <Post
-                          _id={post._id}
-                          title={post.title}
-                          text={post.text}
-                          imageUrl={post.imageUrl}
-                          tags={post.tags}
-                          viewsCount={post.viewsCount}
-                          user={state.user}
-                          createdAt={post.createdAt}
-                          isEditable={isCurrentUser}
-                          likesCount={post.likes?.count || 0}
-                          dislikesCount={post.dislikes?.count || 0}
-                          userReaction={post.userReaction}
-                        />
-                    ))}
-                  </Grid>
-                ) : (
-                  <div className="no-posts">
-                    <Typography variant="h5" color="textSecondary">
-                      Нет статей для отображения
-                    </Typography>
-                    {isCurrentUser && (
-                      <Typography variant="body1">
-                        Создайте свою первую публикацию!
-                      </Typography>
-                    )}
-                  </div>
-                )}
+        
+        <div className="profile-actions">
+          <div className='op'>
+          {isCurrentUser ? (
+            <button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              onClick={() => navigate(`/edit-profile/${state.user._id}`)}
+              className="white-bth1"
+            >
+              Редактировать
+            </button>
+          ) : (
+            <button
+              variant={state.isSubscribed ? "outlined" : "contained"}
+              startIcon={
+                state.isSubscribed ? <PersonRemoveIcon /> : <PersonAddIcon />
+              }
+              onClick={handleSubscribe}
+              className="white-bth1"
+            >
+              {state.isSubscribed ? 'Отписаться' : 'Подписаться'}
+            </button>
+          )}
+          </div>
+        </div>
+        
+        <div className='banner-pro-center'>
+          <div className='d'>
+            <div className="banner-pro3">
+              <div className="pro-flex">
+                <p className='pro-title2'>Подписчиков</p>
+                <p className='pro-username2'>{state.followersCount}</p>
               </div>
+            </div>  
+          </div>
+        </div>
+      
+        <div className='banner-pro-center'>
+          <div className='d'>
+            <div className="banner-pro">
+              <div className="pro-flex">
+                <p className='pro-title'>Имя пользователя</p>
+                <p className='pro-username'>@{state.user.username?.replace('@', '')}</p>
+              </div>
+              <IconButton 
+                onClick={() => handleCopy(`@${state.user.username?.replace('@', '')}`, 'Имя пользователя скопировано')}
+                className="copy-button"
+              >
+                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px", marginRight:"30px" }} />
+              </IconButton>
             </div>
-          </Fade>
-        )}
+            
+            <div className="banner-pro1">
+              <div className="pro-flex">
+                <p className='pro-title'>Дата регистрации</p>
+                <p className='pro-username'>{new Date(state.user.createdAt).toLocaleDateString()}</p>
+              </div>
+              <IconButton 
+                onClick={() => handleCopy(new Date(state.user.createdAt).toLocaleDateString(), 'Дата регистрации скопирована')}
+                className="copy-button"
+              >
+                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px" , marginRight:"30px"}} />
+              </IconButton>
+            </div>
+            
+            <div className="banner-pro1">
+              <div className="pro-flex">
+                <p className='pro-title'>ID пользователя</p>
+                <p className='pro-username'>{state.user._id}</p>
+              </div>
+              <IconButton 
+                onClick={() => handleCopy(state.user._id, 'ID пользователя скопирован')}
+                className="copy-button"
+              >
+                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px" , marginRight:"30px" }} />
+              </IconButton>
+            </div>
+            
+            <div className="banner-pro2">
+              <div className="pro-flex">
+                <p className='pro-title'>О себе</p>
+                <p className='pro-username'>{state.user.about || 'Не указано'}</p>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      
+        <div className='banner-pro-center'>
+          <div className='d'>
+            <div className="banner-pro3">
+              <div className="pro-flex">
+                <p className='pro-title2'>Постов</p>
+                <p className='pro-username2'>{state.posts.length}</p>
+              </div>
+            </div>  
+          </div>
+        </div>
 
-        {activeTab === 'about' && (
-          <Fade in={activeTab === 'about'} timeout={500}>
-            <div>
-              {state.user.about && (
-                <div className="profile-about">
-                  <h3>О себе</h3>
-                  <p>{state.user.about}</p>
+        <div className="tab-content">
+          <div>
+            <div className="posts-section">
+              <h2 className="posts-title">{isCurrentUser ? 'Мои публикации' : 'Публикации'}</h2>
+              
+              {hasPosts ? (
+                <Grid container spacing={3}>
+                  {state.posts.map(post => (
+                    <Post
+                      key={post._id}
+                      _id={post._id}
+                      title={post.title}
+                      text={post.text}
+                      imageUrl={post.imageUrl}
+                      tags={post.tags}
+                      viewsCount={post.viewsCount}
+                      user={state.user}
+                      createdAt={post.createdAt}
+                      isEditable={isCurrentUser}
+                      likesCount={post.likes?.count || 0}
+                      dislikesCount={post.dislikes?.count || 0}
+                      userReaction={post.userReaction}
+                    />
+                  ))}
+                </Grid>
+              ) : (
+                <div className="no-posts">
+                  <Typography variant="h5" color="textSecondary">
+                    Нет статей для отображения
+                  </Typography>
+                  {isCurrentUser && (
+                    <Typography variant="body1">
+                      Создайте свою первую публикацию!
+                    </Typography>
+                  )}
                 </div>
               )}
             </div>
-          </Fade>
-        )}
-
-        {activeTab === 'info' && (
-          <Fade in={activeTab === 'info'} timeout={500}>
-            <div>
-              <div className="profile-additional-info">
-                <h3>Дополнительная информация</h3>
-                <div className="info-grid">
-                  <div className="info-item">
-                    <span className="info-label">Дата регистрации:</span>
-                    <span className='info-label'>{new Date(state.user.createdAt).toLocaleDateString()}</span>
-                  </div>
-
-
-                </div>
-              </div>
-              <div className="profile-additional-info">
-                <h3>AtomGlide Account</h3>
-                <div className="info-grid">
-                  <div className="info-item">
-                    <span className="info-label">{state.user._id}</span>
-                  </div>
-                  {isCurrentUser ? (
-          <>
-            <Tooltip title="Редактировать профиль">
-              <Button
-                variant="outlined"
-                startIcon={<EditIcon />}
-                onClick={() => navigate(`/edit-profile/${state.user._id}`)}
-                className="action-btn"
-              >
-                Редактировать
-              </Button>
-            </Tooltip>
-            
-            <Tooltip title="Выйти из аккаунта">
-              <Button
-                variant="outlined"
-                color="error"
-                startIcon={<LogoutIcon />}
-                onClick={handleLogout}
-                className="action-btn"
-              >
-                Выйти
-              </Button>
-            </Tooltip>
-          </>
-        ) : (
-          <></>
-        )}
-                  {state.user.location && (
-                    <div className="info-item">
-                      <span className="info-label">Местоположение:</span>
-                      <span>{state.user.location}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Fade>
-        )}
+          </div>
+        </div>
+        {isCurrentUser ? (
+              <>
+                <Tooltip title="Выйти из аккаунта">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  startIcon={<LogoutIcon />}
+                  onClick={handleLogout}
+                  className="action-btn"
+                >
+                  Выйти
+                </Button>
+              </Tooltip></>
+            ) : (
+           <></>
+            )}
       </div>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      />
     </div>
   );
 };
