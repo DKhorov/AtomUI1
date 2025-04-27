@@ -4,10 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from '../axios';
 import { logout } from '../redux/slices/auth';
 import { Post } from '../apps/post/post';
+import image from '../img/nft.gif';
+import image1 from '../img/nft2.gif';
+
 import { 
   Avatar, Button, Typography, Grid, CircularProgress,
   Badge, IconButton, Tooltip, Alert, Box, Divider,
-  Tabs, Tab, Fade, Snackbar
+  Tabs, Tab, Fade, Snackbar, Modal, Paper
 } from '@mui/material';
 import {
   Verified as VerifiedIcon,
@@ -23,7 +26,8 @@ import {
   Telegram as TelegramIcon,
   Public as PublicIcon,
   GitHub as GitHubIcon,
-  LinkedIn as LinkedInIcon
+  LinkedIn as LinkedInIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 import { NotificationContext } from '../apps/tools/ui-menu/pushbar/pushbar';
 import '../style/profile/profile.scss';
@@ -50,6 +54,29 @@ const Profile = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedGif, setSelectedGif] = useState(null);
+
+  const gifsData = [
+    {
+      id: 1,
+      image: image,
+      title: "Golden Teddy",
+      description: "Эксклюзивный NFT-медведь, созданный в честь 1 миллиона пользователей AtomGlide. Этот редкий цифровой актив символизирует успех и престиж.",
+      rarity: "Легендарный",
+      owner: `---`,
+      dateAcquired: " 27.04.2025 до 05.05.2025"
+    },
+    {
+      id: 2,
+      image: image1,
+      title: "Pavel Durov",
+      description: "Особая коллекционная NFT-карточка с изображением Павла Дурова. Выпущена ограниченным тиражом в 100 экземпляров.",
+      rarity: "Редкий",
+      owner: '---',
+      dateAcquired: " 27.04.2025 до 05.05.2025"
+    }
+  ];
 
   const getAvatarUrl = (avatarPath) => 
     avatarPath?.startsWith('http') ? avatarPath : `https://atomglidedev.ru${avatarPath || '/default-avatar.jpg'}`;
@@ -77,6 +104,15 @@ const Profile = () => {
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
+  };
+
+  const handleGifClick = (gif) => {
+    setSelectedGif(gif);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   useEffect(() => {
@@ -348,63 +384,203 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="tab-content">
-          <div>
-            <div className="posts-section">
-              <h2 className="posts-title">{isCurrentUser ? 'Мои публикации' : 'Публикации'}</h2>
-              
-              {hasPosts ? (
-                <Grid container spacing={3}>
-                  {state.posts.map(post => (
-                    <Post
-                      key={post._id}
-                      _id={post._id}
-                      title={post.title}
-                      text={post.text}
-                      imageUrl={post.imageUrl}
-                      tags={post.tags}
-                      viewsCount={post.viewsCount}
-                      user={state.user}
-                      createdAt={post.createdAt}
-                      isEditable={isCurrentUser}
-                      likesCount={post.likes?.count || 0}
-                      dislikesCount={post.dislikes?.count || 0}
-                      userReaction={post.userReaction}
-                    />
-                  ))}
-                </Grid>
-              ) : (
-                <div className="no-posts">
-                  <Typography variant="h5" color="textSecondary">
-                    Нет статей для отображения
-                  </Typography>
-                  {isCurrentUser && (
-                    <Typography variant="body1">
-                      Создайте свою первую публикацию!
-                    </Typography>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        {isCurrentUser ? (
-              <>
-                <Tooltip title="Выйти из аккаунта">
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<LogoutIcon />}
-                  onClick={handleLogout}
-                  className="action-btn"
+        
+              <div className="profile-tabs">
+                <Tabs 
+                  value={activeTab} 
+                  onChange={(e, newVal) => setActiveTab(newVal)}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  centered
                 >
-                  Выйти
-                </Button>
-              </Tooltip></>
-            ) : (
-           <></>
-            )}
+                  <Tab label="Публикации" value="posts" />
+                  <Tab label="Подарки (NFT)" value="about" />
+                  <Tab label="Доп.параметры" value="info" />
+
+                </Tabs>
+              </div>
+        
+              {/* Контент вкладок с полной заменой */}
+              <div className="tab-content">
+                {activeTab === 'posts' && (
+                  <Fade in={activeTab === 'posts'} timeout={500}>
+                    <div>
+                      <div className="posts-section">
+                        <h2 className="posts-title">{isCurrentUser ? 'Мои публикации' : 'Публикации'}</h2>
+                        
+                        {hasPosts ? (
+                          <Grid container spacing={3}>
+                            {state.posts.map(post => (
+                                <Post
+                                  _id={post._id}
+                                  title={post.title}
+                                  text={post.text}
+                                  imageUrl={post.imageUrl}
+                                  tags={post.tags}
+                                  viewsCount={post.viewsCount}
+                                  user={state.user}
+                                  createdAt={post.createdAt}
+                                  isEditable={isCurrentUser}
+                                  likesCount={post.likes?.count || 0}
+                                  dislikesCount={post.dislikes?.count || 0}
+                                  userReaction={post.userReaction}
+                                />
+                            ))}
+                          </Grid>
+                        ) : (
+                          <div className="no-posts">
+                            <Typography variant="h5" color="textSecondary">
+                              Нет статей для отображения
+                            </Typography>
+                            {isCurrentUser && (
+                              <Typography variant="body1">
+                                Создайте свою первую публикацию!
+                              </Typography>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Fade>
+                )}
+        
+                {activeTab === 'about' && (
+                  <>
+                   <h2 className="posts-title">{isCurrentUser ? 'Мои подарки (NFT)' : 'Подарки (NFT)'}</h2>
+                    <div className='flexs'>
+                      {gifsData.map(gif => (
+                        <div 
+                          className='gif-cont' 
+                          key={gif.id}
+                          onClick={() => handleGifClick(gif)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <div className='git-conf-img'>
+                            <img src={gif.image} className='gifs' alt={gif.title} />
+                          </div>
+                          <div className="git-conf-img">
+                            <p className='gif-title'>{gif.title}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+        
+                {activeTab === 'info' && (
+                  <Fade in={activeTab === 'info'} timeout={500}>
+                    <div>
+                      <div className="profile-additional-info">
+                        <h3>Дополнительная информация</h3>
+                        <div className="info-grid">
+                          <div className="info-item">
+                            <span className="info-label">Дата регистрации:</span>
+                            <span className='info-label'>{new Date(state.user.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="profile-additional-info">
+                        <h3>AtomGlide Account</h3>
+                        <div className="info-grid">
+                          <div className="info-item">
+                            <span className="info-label">{state.user._id}</span>
+                          </div>
+                          {isCurrentUser ? (
+                            <>
+                              <Tooltip title="Редактировать профиль">
+                                <Button
+                                  variant="outlined"
+                                  startIcon={<EditIcon />}
+                                  onClick={() => navigate(`/edit-profile/${state.user._id}`)}
+                                  className="action-btn"
+                                >
+                                  Редактировать
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Выйти из аккаунта">
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  startIcon={<LogoutIcon />}
+                                  onClick={handleLogout}
+                                  className="action-btn"
+                                >
+                                  Выйти
+                                </Button>
+                              </Tooltip>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                          {state.user.location && (
+                            <div className="info-item">
+                              <span className="info-label">Местоположение:</span>
+                              <span>{state.user.location}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Fade>
+                )}
+              </div>
+
       </div>
+
+      {/* Модальное окно для GIF */}
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="gif-modal-title"
+        aria-describedby="gif-modal-description"
+        className="gif-modal"
+      >
+        <Paper className="gif-modal-content">
+          {selectedGif && (
+            <>
+              <IconButton 
+                className="gif-modal-close" 
+                onClick={handleCloseModal}
+              >
+                <CloseIcon />
+              </IconButton>
+              
+              <div className="gif-modal-header">
+                <h2 id="gif-modal-title">{selectedGif.title}</h2>
+                <span className={`rarity-badge ${selectedGif.rarity.toLowerCase()}`}>
+                  {selectedGif.rarity}
+                </span>
+              </div>
+              
+              <div className="gif-modal-body">
+                <div className="gif-modal-image-container">
+                  <img 
+                    src={selectedGif.image} 
+                    alt={selectedGif.title} 
+                    className="gif-modal-image"
+                  />
+                </div>
+                
+                <div className="gif-modal-info">
+                  <p className="gif-modal-description">{selectedGif.description}</p>
+                  
+                  <div className="gif-modal-details">
+                    <div className="detail-item">
+                      <span className="detail-label">Владелец:</span>
+                      <span className="detail-value">{selectedGif.owner}</span>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <span className="detail-label">Дата получения:</span>
+                      <span className="detail-value">{selectedGif.dateAcquired}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </Paper>
+      </Modal>
 
       <Snackbar
         open={snackbarOpen}
