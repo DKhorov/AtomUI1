@@ -8,7 +8,7 @@ const OnlineUsers = () => {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
 
-  const phrases = [" nerdy.", " simple.", " pure JS.", " pretty.", " fun!"];
+  const phrases = [" NFT.", " simple.", " pure JS.", " pretty.", " fun!"];
   const period = 2000;
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const OnlineUsers = () => {
         fontSize: '3.5rem',
         color: 'inherit'
       }}>
-        AtomGlide 2.0 is
+        AtomGlide 2.5 is
         <span style={{ 
           borderRight: '0.08em solid #666',
           paddingRight: '2px',
