@@ -226,7 +226,6 @@ html, body {
   display: flex;
   justify-content: center;
   margin-top: 0px;
-  z-index: 10000;
 }
 @media (max-width: 768px) {
   .profile-banner {
@@ -460,5 +459,154 @@ text-align: center; margin-top: 4px;
   margin-left: 20px;
   margin-top: 0;
 
-
 }
+
+.gif-cont{
+  background-color: #9d7a2ee0;
+  width: 250px;
+  height: 270px;
+  border-radius: 10px;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.gif-cont2{
+  background-color: #ff9100e0;
+  width: 250px;
+  height: 270px;
+  align-items: center;
+  margin-left: 30px;
+  padding: 10px;
+}
+
+.git-conf-img{
+  display: flex;
+  justify-content: center;
+}
+
+.gifs{
+  width: 190px;
+  margin-top: 15px;
+  margin-right: 5px;
+
+  height: 190px;
+}
+
+.gif-title{
+  text-align: center;
+  color: white;
+  font-family: "JetBrains Mono";
+  text-align: center;
+}
+
+.flexs{
+  display: flex;
+}
+
+.gif-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  
+  .gif-modal-content {
+    position: relative;
+    background-color: #151920;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    outline: none;
+    
+    .gif-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    
+    .gif-modal-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      
+      h2 {
+        margin: 0;
+        margin-right: 1rem;
+      }
+      
+      .rarity-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        
+        &.легендарный {
+          background-color: gold;
+          color: black;
+        }
+        
+        &.редкий {
+          background-color: purple;
+          color: white;
+        }
+      }
+    }
+    
+    .gif-modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      
+      @media (min-width: 768px) {
+        flex-direction: row;
+      }
+      
+      .gif-modal-image-container {
+        flex: 1;
+
+        
+        .gif-modal-image {
+          width: 100%;
+          border-radius: 8px;
+          max-height: 300px;
+          object-fit: contain;
+        }
+      }
+
+      
+      .gif-modal-info {
+        flex: 1;
+        
+        
+        .gif-modal-description {
+          margin-bottom: 1.5rem;
+          line-height: 1.6;
+          color: white;
+        }
+        
+        .gif-modal-details {
+          .detail-item {
+            display: flex;
+            margin-bottom: 0.75rem;
+            
+            .detail-label {
+              font-weight: bold;
+              color: white;
+              min-width: 120px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .gif-cont{
+    margin-top: 10px;
+  }
+  .flexs {
+    flex-direction: column;
+  }}
