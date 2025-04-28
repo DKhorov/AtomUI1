@@ -6,6 +6,7 @@ import { logout } from '../redux/slices/auth';
 import { Post } from '../apps/post/post';
 import image from '../img/nft.gif';
 import image1 from '../img/nft2.gif';
+import image3 from '../img/nft3.gif';
 
 import { 
   Avatar, Button, Typography, Grid, CircularProgress,
@@ -75,7 +76,16 @@ const Profile = () => {
       rarity: "Редкий",
       owner: '---',
       dateAcquired: " 27.04.2025 до 05.05.2025"
-    }
+    },
+    {
+      id: 3,
+      image: image3,
+      title: "Black Emoji",
+      description: "Это NFT из новой коллекции AtomGlide Black Emoji, выпущенной в честь 100-го поста в AtomGlide",
+      rarity: "Легендарный",
+      owner: `---`,
+      dateAcquired: " 28.04.2025 до 05.05.2025"
+    },
   ];
 
   const getAvatarUrl = (avatarPath) => 
