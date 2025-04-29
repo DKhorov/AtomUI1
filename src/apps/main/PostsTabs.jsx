@@ -181,7 +181,6 @@ export const PostsTabs = ({
                     title={post.title}
                     text={post.text}
                     tags={post.tags}
-                    viewsCount={post.viewsCount}
                     user={post.user || {}}
                     createdAt={post.createdAt}
                     isEditable={userData?._id === (post.user?._id || null)}
@@ -209,6 +208,7 @@ export const PostsTabs = ({
                 title={post.title}
                 text={post.text}
                 tags={post.tags}
+                language={post.language}
                 viewsCount={post.viewsCount}
                 commentsCount ={post.commentsCount}
                 user={post.user || {}}
