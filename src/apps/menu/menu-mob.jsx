@@ -113,7 +113,7 @@ export const Mobile = () => {
     <div className="mobile-menu">
       {/* Все иконки меню */}
       <Link to="/"><BsHouseDoor className="menu-icon-z" /></Link>
-      <Link to="/сhat"><BsChat className="menu-icon-z" /></Link>
+      <Link to="/priv"><BsChat className="menu-icon-z" /></Link>
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
       <BsFillHeartFill className="menu-icon-z" onClick={handleOpenFavorites} />
       
