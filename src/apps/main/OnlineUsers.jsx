@@ -65,7 +65,7 @@ const OnlineUsers = () => {
         fontSize: '3.5rem',
         color: 'inherit'
       }}>
-        AtomGlide 2.5 is
+        AtomGlide 3.0 is
         <span style={{ 
           borderRight: '0.08em solid #666',
           paddingRight: '2px',
