@@ -4,11 +4,33 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchPosts, fetchTags } from '../../redux/slices/posts';
 import { selectIsAuth } from '../../redux/slices/auth';
 import axios from '../../axios';
+<<<<<<< HEAD
 import { PostCreationPanel } from './PostCreationPanel';
 import { PostsTabs } from './PostsTabs';
 import { FollowingPanel } from './FollowingPanel';
+=======
+import ReactMarkdown from 'react-markdown';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import Fullscreen from '@mui/icons-material/Fullscreen';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
+import Send from '@mui/icons-material/Send';
+import FormatBold from '@mui/icons-material/FormatBold';
+import FormatItalic from '@mui/icons-material/FormatItalic';
+import FormatListBulleted from '@mui/icons-material/FormatListBulleted';
+import FormatListNumbered from '@mui/icons-material/FormatListNumbered';
+import LinkIcon from '@mui/icons-material/Link';
+import CodeIcon from '@mui/icons-material/Code';
+import ImageIcon from '@mui/icons-material/Image';
+import FormatQuote from '@mui/icons-material/FormatQuote';
+import FormatHeader1 from '@mui/icons-material/LooksOne';
+import FormatHeader2 from '@mui/icons-material/LooksTwo';
+import { Box, CircularProgress, Typography } from "@mui/material";
+import { Post } from '../post/post';
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
 import '../../style/work/work.scss';
 import OnlineUsers from './OnlineUsers';
+import Ad from '../ad/ad';
+
 
 const Work = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -17,7 +39,11 @@ const Work = () => {
     setModalMessage('Это бета тест 2 до вторика ');
     setOpenModal(true);
   }, []);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const { posts, tags } = useSelector(state => state.posts);
@@ -34,6 +60,13 @@ const Work = () => {
   const [title, setTitle] = useState('');
   const [postTags, setPostTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+<<<<<<< HEAD
+=======
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const inputFileRef = useRef(null);
+  const textareaRef = useRef(null);
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -51,6 +84,112 @@ const Work = () => {
     setShowImageUpload(false);
   };
 
+<<<<<<< HEAD
+=======
+  const handleFileClick = () => {
+    setShowTextArea(!showTextArea);
+    setShowTagsInput(false);
+    setShowImageUpload(false);
+  };
+
+  const handlePhotoClick = () => {
+    setShowImageUpload(!showImageUpload);
+    setShowTextArea(false);
+    setShowTagsInput(false);
+  };
+
+  const handleTagsClick = () => {
+    setShowTagsInput(!showTagsInput);
+    setShowTextArea(!showTextArea);
+    setShowImageUpload(false);
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        throw new Error('Допустимые форматы: JPG, PNG, GIF, WebP');
+      }
+
+      const maxSize = 20 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error(`Файл слишком большой (макс. ${maxSize/1024/1024}MB)`);
+      }
+
+      setLoading(true);
+      setUploadProgress(0);
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const { data } = await axios.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+
+      if (!data.url) throw new Error('URL изображения не получен от сервера');
+      setImageUrl(data.url);
+    } catch (err) {
+      console.error('Ошибка при загрузке файла:', err);
+      setModalMessage(err.message || 'Ошибка при загрузке файла!');
+      setOpenModal(true);
+      setImageUrl('');
+    } finally {
+      setLoading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleChangeFile = async (event) => {
+    if (event.target.files && event.target.files[0]) {
+      await handleFileUpload(event.target.files[0]);
+    }
+  };
+
+  const onClickRemoveImage = () => {
+    setImageUrl('');
+  };
+
+  const onChangeText = (e) => {
+    setText(e.target.value);
+  };
+
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
   const onSubmit = async () => {
     if (!title.trim()) {
       setModalMessage('Пожалуйста, введите заголовок поста');
@@ -113,11 +252,14 @@ const Work = () => {
 
   return (
     <div className="work-panel">
+<<<<<<< HEAD
 
       {userData ? (
         <div className='panel-created'>
           <div className="posts-container">
           <OnlineUsers />
+          <Ad />
+
 
             
             
@@ -133,11 +275,354 @@ const Work = () => {
               isMounted={isMounted}
             />
 
+=======
+      {userData ? (
+        <div className='panel-created'>
+          <div className="posts-container">
+            <div className={`DS1 animate-fade-in ${isMounted ? 'delay-1' : ''} ${(showTextArea || showTagsInput || showImageUpload) ? 'expanded' : ''}`}>
+              <h1 className='YHN'>Добавить пост</h1>
+              <input
+                type="text"
+                className="post-title-input"
+                placeholder="Напиши заголовок поста"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              {showTagsInput && (
+                <input
+                  type="text"
+                  className="tags-input"
+                  placeholder="Сюда один тэг"
+                  value={postTags}
+                  onChange={(e) => setPostTags(e.target.value)}
+                />
+              )}
+              {showTextArea && (
+                <div className="markdown-editor">
+                  <div className="markdown-toolbar">
+                    <button onClick={formatBold} title="Жирный"><FormatBold /></button>
+                    <button onClick={formatItalic} title="Курсив"><FormatItalic /></button>
+                    <button onClick={formatHeader1} title="Заголовок 1"><FormatHeader1 /></button>
+                    <button onClick={formatHeader2} title="Заголовок 2"><FormatHeader2 /></button>
+                    <button onClick={formatList} title="Маркированный список"><FormatListBulleted /></button>
+                    <button onClick={formatNumberedList} title="Нумерованный список"><FormatListNumbered /></button>
+                    <button onClick={formatCode} title="Код"><CodeIcon /></button>
+                    <button onClick={formatCodeBlock} title="Блок кода"><CodeIcon /></button>
+                    <button onClick={formatQuote} title="Цитата"><FormatQuote /></button>
+                  </div>
+                  <textarea
+                    ref={textareaRef}
+                    className="post-textarea"
+                    placeholder="Сюда текст поста (поддерживается Markdown)..."
+                    value={text}
+                    onChange={onChangeText}
+                    rows={8}
+                  />
+                  <div className="markdown-preview">
+                    <h4>Предпросмотр:</h4>
+                    <ReactMarkdown>{text || '*Начните вводить текст...*'}</ReactMarkdown>
+                  </div>
+                </div>
+              )}
+              
+              
+              
+              {showImageUpload && (
+                <div 
+                  className={`image-upload ${isDragging ? 'dragging' : ''}`}
+                  onDragEnter={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onClick={() => !imageUrl && inputFileRef.current.click()}
+                >
+                  {!imageUrl ? (
+                    <div className="upload-area">
+                      <PhotoCamera style={{ 
+                        fontSize: 50, 
+                        color: isDragging ? '#4a96f3' : '#a0a0a0',
+                        transition: 'color 0.3s ease'
+                      }} />
+                      <p className="upload-text">
+                        {isDragging ? 'Отпустите для загрузки' : 'Перетащите изображение сюда или нажмите для выбора'}
+                      </p>
+                      {uploadProgress > 0 && (
+                        <div className="upload-progress">
+                          <div className="progress-bar" style={{ width: `${uploadProgress}%` }} />
+                          <span>{uploadProgress}%</span>
+                        </div>
+                      )}
+                      <input 
+                        ref={inputFileRef} 
+                        type="file" 
+                        onChange={handleChangeFile} 
+                        hidden 
+                        accept="image/*,.png,.jpg,.jpeg,.gif,.webp" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="image-preview-container">
+                      <button 
+                        className="remove-image-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onClickRemoveImage();
+                        }}
+                      >
+                        Удалить
+                      </button>
+                      <img 
+                        src={`https://atomglidedev.ru${imageUrl}`} 
+                        alt="Uploaded preview" 
+                        className="preview-image"
+                        onClick={(e) => e.stopPropagation()}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/default-image.png';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="tab-s">
+                <div className="icon-buttons">
+                  <button 
+                    className={`icon-button ${showImageUpload ? 'active' : ''}`} 
+                    title="Фото"
+                    onClick={handlePhotoClick}
+                  >
+                    <PhotoCamera />
+                  </button>
+            
+                  <button 
+                    className={`icon-button ${showTagsInput ? 'active' : ''}`} 
+                    title="Теги"
+                    onClick={handleTagsClick}
+                  >
+                    <Fullscreen />
+                  </button>
+                </div>
+                <button 
+                  className="icon-button send-button" 
+                  title="Отправить"
+                  onClick={onSubmit}
+                  disabled={isLoading}
+                >
+                  {isLoading ? '...' : <Send />}
+                </button>
+              </div>
+            </div>
+            
+            {/* Остальная часть кода остается без изменений */}
+            <div className={`DS2 animate-fade-in ${isMounted ? 'delay-2' : ''}`}>
+              <div className="tab-slider">
+                <div className="tab-slider-container">
+                  <button
+                    className={`tab-slider-button ${activeTab === 'home' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('home')}
+                  >
+                    Home
+                  </button>
+                  <button
+                    className={`tab-slider-button ${activeTab === 'photo' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('photo')}
+                  >
+                    Photo
+                  </button>
+                  <button
+                    className={`tab-slider-button ${activeTab === 'news' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('news')}
+                  >
+                    News
+                  </button>
+                  <div 
+                    className="tab-slider-indicator"
+                    style={{
+                      width: 'calc(33.33% - 10px)',
+                      left: activeTab === 'home' ? '5px' : 
+                            activeTab === 'photo' ? 'calc(33.33% + 5px)' : 
+                            'calc(66.66% + 5px)'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {isPostsLoading ? (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
+            ) : activeTab === 'photo' ? (
+              <div className="pinterest-grid">
+                {shuffledPosts.length > 0 ? (
+                  shuffledPosts.map((post, index) => (
+                    <div 
+                      key={post._id} 
+                      className="pinterest-item post-animate"
+                      style={getPostAnimationStyle(index)}
+                      onClick={() => navigate(`/posts/${post._id}`)}
+                    >
+                      {post.imageUrl && (
+                        <>
+                          <img
+                            src={`https://atomglidedev.ru${post.imageUrl}`}
+                            alt={post.title}
+                            className="pinterest-image"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/default-image.png';
+                            }}
+                          />
+                          {post.title && (
+                            <div className="image-overlay">
+                              <p className="image-title">{post.title}</p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
+                    Нет фото для отображения
+                  </div>
+                )}
+              </div>
+            ) : activeTab === 'news' ? (
+              <div className="news-container">
+                <h2 className="news-title">Последние новости</h2>
+                <div className="news-updates">
+                  <div className="update-item">
+                    <span className="update-date">04.04.2025</span>
+                    <p className="update-text">Запуск бета теста 2 до вторника</p>
+                  </div>
+                  <div className="update-item">
+                    <span className="update-date">03.04.2025</span>
+                    <p className="update-text">Чаты теперь раб но не раб</p>
+                  </div>
+                </div>
+
+                <h2 className="news-title">Важные объявления</h2>
+                {posts.items.filter(post => post.tags && post.tags.includes('alert')).length > 0 ? (
+                  posts.items
+                    .filter(post => post.tags && post.tags.includes('alert'))
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map((post, index) => (
+                      <div 
+                        key={post._id} 
+                        className="alert-post post-animate"
+                        style={getPostAnimationStyle(index)}
+                      >
+                        <Post
+                          _id={post._id}
+                          imageUrl={post.imageUrl}
+                          title={post.title}
+                          text={post.text}
+                          tags={post.tags}
+                          viewsCount={post.viewsCount}
+                          user={post.user || {}}
+                          createdAt={post.createdAt}
+                          isEditable={userData?._id === (post.user?._id || null)}
+                        />
+                      </div>
+                    ))
+                ) : (
+                  <div className="no-alerts">
+                    На данный момент нет важных объявлений
+                  </div>
+                )}
+              </div>
+            ) : posts.items.length > 0 ? (
+              [...posts.items]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map((post, index) => (
+                  <div 
+                    key={post._id} 
+                    className="post-animate"
+                    style={getPostAnimationStyle(index)}
+                  >
+                    <Post
+                      _id={post._id}
+                      imageUrl={post.imageUrl}
+                      title={post.title}
+                      text={post.text}
+                      tags={post.tags}
+                      viewsCount={post.viewsCount}
+                      user={post.user || {}}
+                      createdAt={post.createdAt}
+                      isEditable={userData?._id === (post.user?._id || null)}
+                      likesCount={post.likes?.count || 0}
+                      dislikesCount={post.dislikes?.count || 0}
+                      userReaction={post.userReaction}
+                    />
+                  </div>
+                ))
+            ) : (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
+            )}
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           </div>
         </div>
       ) : (
         <div className='panel-created'>
           <div className="posts-container">
+<<<<<<< HEAD
             <PostsTabs
               activeTab={activeTab}
               handleTabChange={handleTabChange}
@@ -148,6 +633,200 @@ const Work = () => {
               getPostAnimationStyle={getPostAnimationStyle}
               isMounted={isMounted}
             />
+=======
+            <div className={`DS2 animate-fade-in ${isMounted ? 'delay-2' : ''}`}>
+              <div className="tab-slider">
+                <div className="tab-slider-container">
+                  <button
+                    className={`tab-slider-button ${activeTab === 'home' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('home')}
+                  >
+                    Home
+                  </button>
+                  <button
+                    className={`tab-slider-button ${activeTab === 'photo' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('photo')}
+                  >
+                    Photo
+                  </button>
+                  <button
+                    className={`tab-slider-button ${activeTab === 'news' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('news')}
+                  >
+                    News
+                  </button>
+                  <div 
+                    className="tab-slider-indicator"
+                    style={{
+                      width: 'calc(33.33% - 10px)',
+                      left: activeTab === 'home' ? '5px' : 
+                            activeTab === 'photo' ? 'calc(33.33% + 5px)' : 
+                            'calc(66.66% + 5px)'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {isPostsLoading ? (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
+            ) : activeTab === 'photo' ? (
+              <div className="pinterest-grid">
+                {shuffledPosts.length > 0 ? (
+                  shuffledPosts.map((post, index) => (
+                    <div 
+                      key={post._id} 
+                      className="pinterest-item post-animate"
+                      style={getPostAnimationStyle(index)}
+                      onClick={() => navigate(`/posts/${post._id}`)}
+                    >
+                      {post.imageUrl && (
+                        <>
+                          <img
+                            src={`https://atomglidedev.ru${post.imageUrl}`}
+                            alt={post.title}
+                            className="pinterest-image"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/default-image.png';
+                            }}
+                          />
+                          {post.title && (
+                            <div className="image-overlay">
+                              <p className="image-title">{post.title}</p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
+                    Нет фото для отображения
+                  </div>
+                )}
+              </div>
+            ) : activeTab === 'news' ? (
+              <div className="news-container">
+                <h2 className="news-title">Последние обновления</h2>
+                <div className="news-updates">
+                  <div className="update-item">
+                    <span className="update-date">11.04.2025</span>
+                    <p className="update-text">Бета тест 3</p>
+                  </div>
+                </div>
+
+                <h2 className="news-title">Важные объявления</h2>
+                {posts.items.filter(post => post.tags && post.tags.includes('alert')).length > 0 ? (
+                  posts.items
+                    .filter(post => post.tags && post.tags.includes('alert'))
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map((post, index) => (
+                      <div 
+                        key={post._id} 
+                        className="alert-post post-animate"
+                        style={getPostAnimationStyle(index)}
+                      >
+                        <Post
+                          _id={post._id}
+                          imageUrl={post.imageUrl}
+                          title={post.title}
+                          text={post.text}
+                          tags={post.tags}
+                          viewsCount={post.viewsCount}
+                          user={post.user || {}}
+                          createdAt={post.createdAt}
+                          isEditable={userData?._id === (post.user?._id || null)}
+                        />
+                      </div>
+                    ))
+                ) : (
+                  <div className="no-alerts">
+                    На данный момент нет важных объявлений
+                  </div>
+                )}
+              </div>
+            ) : posts.items.length > 0 ? (
+              [...posts.items]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map((post, index) => (
+                  <div 
+                    key={post._id} 
+                    className="post-animate"
+                    style={getPostAnimationStyle(index)}
+                  >
+                    <Post
+                      _id={post._id}
+                      imageUrl={post.imageUrl}
+                      title={post.title}
+                      text={post.text}
+                      tags={post.tags}
+                      viewsCount={post.viewsCount}
+                      user={post.user || {}}
+                      createdAt={post.createdAt}
+                      isEditable={userData?._id === (post.user?._id || null)}
+                    />
+                  </div>
+                ))
+            ) : (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
+            )}
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Typography, TextField, IconButton } from "@mui/material";
+import { Box, CircularProgress, Typography, IconButton } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Post } from '../post/post';
@@ -25,7 +25,8 @@ export const PostsTabs = ({
     return (
       post.title.toLowerCase().includes(query) ||
       post.text.toLowerCase().includes(query) ||
-      (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
+      (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query))) ||
+      (post.user?.fullName && post.user.fullName.toLowerCase().includes(query))
     );
   });
 
@@ -33,10 +34,13 @@ export const PostsTabs = ({
     setSearchQuery('');
   };
 
+  const popularPosts = [...posts.items]
+    .sort((a, b) => (b.likes?.count || 0) - (a.likes?.count || 0))
+    .slice(0, 10);
+
   if (isPostsLoading) {
     return (
       <Box
-        
         sx={{
           position: "fixed",
           top: 0,
@@ -78,6 +82,12 @@ export const PostsTabs = ({
             Home
           </button>
           <button
+            className={`tab-slider-button ${activeTab === 'popular' ? 'active' : ''}`}
+            onClick={() => handleTabChange('popular')}
+          >
+            Popular
+          </button>
+          <button
             className={`tab-slider-button ${activeTab === 'photo' ? 'active' : ''}`}
             onClick={() => handleTabChange('photo')}
           >
@@ -92,22 +102,22 @@ export const PostsTabs = ({
           <div 
             className="tab-slider-indicator"
             style={{
-              width: 'calc(33.33% - 10px)',
+              width: 'calc(25% - 10px)',
               left: activeTab === 'home' ? '5px' : 
-                    activeTab === 'photo' ? 'calc(33.33% + 5px)' : 
-                    'calc(66.66% + 5px)'
+                    activeTab === 'popular' ? 'calc(25% + 5px)' : 
+                    activeTab === 'photo' ? 'calc(50% + 5px)' :
+                    'calc(75% + 5px)'
             }}
           />
         </div>
       </div>
 
-      {/* Панель поиска */}
       <div className={`search-panel ${isSearchFocused ? 'focused' : ''}`}>
         <SearchIcon className="search-icon" />
         <input
           type="text"
           className="search-input"
-          placeholder="Поиск постов..."
+          placeholder="Поиск постов, тегам или авторам..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setIsSearchFocused(true)}
@@ -163,7 +173,6 @@ export const PostsTabs = ({
         </div>
       ) : activeTab === 'news' ? (
         <div className="news-container">
-      =
           <h2 className="news-title">Важные объявления</h2>
           {posts.items.filter(post => post.tags && post.tags.includes('alert')).length > 0 ? (
             posts.items
@@ -193,6 +202,40 @@ export const PostsTabs = ({
             </div>
           )}
         </div>
+      ) : activeTab === 'popular' ? (
+        <div className="popular-posts-container">
+          <h2 className="news-title">Популярные посты</h2>
+          {popularPosts.length > 0 ? (
+            popularPosts.map((post, index) => (
+              <div 
+                key={post._id} 
+                className="post-animate"
+                style={getPostAnimationStyle(index)}
+              >
+                <Post
+                  _id={post._id}
+                  imageUrl={post.imageUrl}
+                  title={post.title}
+                  text={post.text}
+                  tags={post.tags}
+                  language={post.language}
+                  viewsCount={post.viewsCount}
+                  commentsCount={post.commentsCount}
+                  user={post.user || {}}
+                  createdAt={post.createdAt}
+                  isEditable={userData?._id === (post.user?._id || null)}
+                  likesCount={post.likes?.count || 0}
+                  dislikesCount={post.dislikes?.count || 0}
+                  userReaction={post.userReaction}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="no-posts-found">
+              <p>Нет популярных постов</p>
+            </div>
+          )}
+        </div>
       ) : filteredPosts.length > 0 ? (
         [...filteredPosts]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -210,8 +253,11 @@ export const PostsTabs = ({
                 tags={post.tags}
                 language={post.language}
                 viewsCount={post.viewsCount}
-                commentsCount ={post.commentsCount}
-                user={post.user || {}}
+                commentsCount={post.commentsCount}
+                user={{
+                  ...(post.user || {}),
+                  accountType: post.user?.accountType, // Добавлена запятая
+                }}
                 createdAt={post.createdAt}
                 isEditable={userData?._id === (post.user?._id || null)}
                 likesCount={post.likes?.count || 0}
