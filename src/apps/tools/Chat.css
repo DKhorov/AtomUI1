@@ -274,15 +274,3 @@
 }
 
 /* Анимации */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.message-item {
-  animation: fadeIn 0.3s ease-out;
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
