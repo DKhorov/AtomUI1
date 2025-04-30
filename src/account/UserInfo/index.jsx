@@ -1,7 +1,8 @@
 import React from 'react';
 import { Avatar } from '@mui/material';
 import styles from './UserInfo.module.scss';
-
+import VerifiedIcon from '@mui/icons-material/Verified'; // Добавлено
+import StoreIcon from '@mui/icons-material/Store'; 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -32,7 +33,17 @@ const formatTimeAgo = (dateString) => {
   return 'только что';
 };
 
-export const UserInfo = ({ avatarUrl, fullName, additionalText, postTag }) => {
+export const UserInfo = ({ 
+  avatarUrl, 
+  fullName, 
+  additionalText, 
+  postTag,
+  accountType // Добавлен новый проп
+}) => {
+  // Определяем условия для значков
+  const showVerifiedBadge = accountType === 'verified_user' || accountType === 'admin';
+  const showShopBadge = accountType === 'shop';
+
   const formattedText = additionalText ? formatTimeAgo(additionalText) : null;
   
   const getInitials = (name) => {
@@ -59,7 +70,8 @@ export const UserInfo = ({ avatarUrl, fullName, additionalText, postTag }) => {
         </Avatar>
       )}
       <div className={styles.userDetails}>
-        <span className={styles.userName}>{fullName}</span>
+      <span className={styles.userName}>{fullName}</span>
+      
         <div className={styles.metaInfo}>
          {postTag && (
             <span className={styles.postTag}>#{postTag}</span>
@@ -68,7 +80,22 @@ export const UserInfo = ({ avatarUrl, fullName, additionalText, postTag }) => {
             <span className={styles.additional}>{formattedText}</span>
           )}
         </div>
+        
       </div>
+      {showVerifiedBadge && (
+            <VerifiedIcon 
+              className={styles.verifiedBadge} 
+              fontSize="inherit" 
+              color="primary" 
+            />
+          )}
+          {showShopBadge && (
+            <StoreIcon 
+              className={styles.shopBadge} 
+              fontSize="inherit" 
+              color="primary" 
+            />
+          )}
     </div>
   );
 };

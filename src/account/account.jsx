@@ -7,6 +7,7 @@ import { Post } from '../apps/post/post';
 import image from '../img/nft.gif';
 import image1 from '../img/nft2.gif';
 import image3 from '../img/nft3.gif';
+import image4 from '../img/code.gif';
 
 import { 
   Avatar, Button, Typography, Grid, CircularProgress,
@@ -82,6 +83,24 @@ const Profile = () => {
       image: image3,
       title: "Black Emoji",
       description: "Это NFT из новой коллекции AtomGlide Black Emoji, выпущенной в честь 100-го поста в AtomGlide",
+      rarity: "Легендарный",
+      owner: `---`,
+      dateAcquired: " 28.04.2025 до 05.05.2025"
+    },
+    {
+      id: 5,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png',
+      title: "Linux",
+      description: "Это NFT в честь Linux Ubuntu",
+      rarity: "Легендарный",
+      owner: `---`,
+      dateAcquired: " 28.04.2025 до 05.05.2025"
+    },
+    {
+      id: 6,
+      image: image4,
+      title: "AtomCode",
+      description: "Это NFT в честь выпуска редактора кода в AtomGlide",
       rarity: "Легендарный",
       owner: `---`,
       dateAcquired: " 28.04.2025 до 05.05.2025"

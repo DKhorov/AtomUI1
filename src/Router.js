@@ -8,6 +8,9 @@ import { Mobile } from './apps/menu/menu-mob';
 import Dock from "./apps/menu/dock";
 import Profile from './account/account';
 import Chat from './apps/tools/chat';
+import Store from './apps/store/store';
+import Code from './code/index';
+
 import Priv from './apps/tools/priv';
 import { SnackbarProvider } from 'notistack';
 import Login from "./apps/setup/Login";
@@ -54,7 +57,8 @@ const AppRouter = () => {
         <Route path="/priv" element={<Priv />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />
-        
+        <Route path="/code" element={<Code />} />
+
 
 
 
@@ -64,6 +68,9 @@ const AppRouter = () => {
           element={
             <>
               <Header />
+              
+              
+
               {isMobile && <Mobile />}
               <Routes>
                 <Route
@@ -85,12 +92,11 @@ const AppRouter = () => {
                   }
                 />
                 
-
                 <Route path="/posts/:id" element={<FullPost />} />
                 <Route path="/account/profile/:id?" element={<Profile />} />
                 <Route path="/edit-profile/:id" element={<ProfileEdit />} />
-                // В вашем основном файле роутера добавьте:
-<Route path="/tags/:tag" element={<TagsPage />} />
+                <Route path="/store" element={<Store />} />
+                <Route path="/tags/:tag" element={<TagsPage />} />
               </Routes>
             </>
           } 

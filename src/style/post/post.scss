@@ -100,7 +100,6 @@ $star-light: rgba(218, 243, 255, 0.95);
   margin: 24px 0;
   border-radius: 8px;
   overflow: hidden;
-  @include cosmic-border;
   display: flex;
   justify-content: center;
   background: rgba($space-gray, 0.3);
@@ -113,9 +112,9 @@ $star-light: rgba(218, 243, 255, 0.95);
 
 .img-IKLS {
   width: auto;
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
-  max-height: 1200px;
+  max-height: 600px;
   object-fit: contain;
   display: block;
   margin: 0 auto;
@@ -334,4 +333,59 @@ $star-light: rgba(218, 243, 255, 0.95);
 
 .s{
   display: flex;
+}
+
+
+// Добавляем эти стили в конец файла
+.fullscreen-image {
+  &-backdrop {
+    background: rgba($space-dark, 0.95) !important;
+    backdrop-filter: blur(12px);
+  }
+
+  &-paper {
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  &-toolbar {
+    background: transparent !important;
+    justify-content: flex-end !important;
+  }
+
+  &-content {
+    flex: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 20px !important;
+  }
+
+  &-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(0deg, rgba($space-dark, 0.9) 60%, transparent);
+    padding: 24px;
+    color: white;
+    
+    .user-info {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .fullscreen-image {
+    &-info {
+      padding: 16px;
+      
+      .MuiTypography-body2 {
+        font-size: 0.85rem;
+      }
+    }
+  }
 }

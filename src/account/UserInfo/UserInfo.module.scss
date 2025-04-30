@@ -58,3 +58,17 @@
   border-radius: 4px;
   color: white;
 }
+
+// UserInfo.module.scss
+.verifiedBadge {
+  font-size: 16px !important;
+  margin-left: 4px;
+  margin-top: -18px;
+  color: #2196F3 !important; // Синий цвет для проверки
+}
+
+.shopBadge {
+  font-size: 16px !important;
+  margin-left: 4px;
+  color: #FF5722 !important; // Оранжевый для магазина
+}
