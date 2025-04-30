@@ -113,47 +113,15 @@ export const Post = ({
   });
   const [favorite, setFavorite] = React.useState(isFavorite);
   const [isReacting, setIsReacting] = React.useState(false);
-<<<<<<< HEAD
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-=======
-  const [imageStatus, setImageStatus] = React.useState('loading'); // 'loading', 'loaded', 'error'
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
 
   React.useEffect(() => {
     setReactionData({ likesCount, dislikesCount, userReaction });
     setFavorite(isFavorite);
-<<<<<<< HEAD
   }, [likesCount, dislikesCount, userReaction, isFavorite]);
 
   const handleMenuClick = (e) => {
-=======
-    setImageStatus(imageUrl ? 'loading' : 'error');
-  }, [likesCount, dislikesCount, userReaction, imageUrl, isFavorite]);
-
-  const processImageUrl = (url) => {
-    if (!url) return null;
-    
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    
-    const baseUrl = 'https://atomglidedev.ru';
-    return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
-  };
-
-  const fullImageUrl = processImageUrl(imageUrl);
-
-  const handleImageLoad = () => {
-    setImageStatus('loaded');
-  };
-
-  const handleImageError = () => {
-    setImageStatus('error');
-  };
-
-  const onClickRemove = async (e) => {
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
     e.stopPropagation();
     setAnchorEl(e.currentTarget);
   };
@@ -206,7 +174,6 @@ export const Post = ({
     }
   };
 
-<<<<<<< HEAD
   const handleReport = (e) => {
     e.stopPropagation();
     handleMenuClose();
@@ -221,11 +188,6 @@ export const Post = ({
     } catch (err) {
       console.error('Ошибка удаления:', err);
       alert('Не удалось удалить пост');
-=======
-  const renderTags = () => {
-    if (!Array.isArray(tags) || tags.length === 0) {
-      return null;
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
     }
     setDeleteDialogOpen(false);
   };
@@ -314,54 +276,13 @@ export const Post = ({
         <div className="post-header">
           <div onClick={(e) => { e.stopPropagation(); navigate(`/account/profile/${postAuthorId}`); }}>
           <UserInfo 
-<<<<<<< HEAD
   {...user} 
   additionalText={createdAt}
   avatarUrl={processImageUrl(user?.avatarUrl)}
   accountType={user.accountType} // Явно передаем тип аккаунта
 />
-=======
-            {...user} 
-            additionalText={createdAt}
-            avatarUrl={user?.avatarUrl ? processImageUrl(user.avatarUrl) : ''}
-          />
-        </div>
-        
-        {fullImageUrl && imageStatus !== 'error' && (
-          <div className="J_HJKe">
-            {imageStatus === 'loading' && (
-              <div className="image-loading-placeholder">
-                Загрузка изображения...
-              </div>
-            )}
-            <div 
-              className="blurred-background"
-              style={{ 
-                backgroundImage: `url(${fullImageUrl})`,
-                display: imageStatus === 'loaded' ? 'block' : 'none'
-              }}
-            />
-            <img
-              className='img-IKLS'
-              src={fullImageUrl}
-              alt={title}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              style={{ display: imageStatus === 'loaded' ? 'block' : 'none' }}
-              loading="lazy"
-            />         
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           </div>
 
-<<<<<<< HEAD
-=======
-        {imageStatus === 'error' && (
-          <div className="image-error-placeholder">
-          </div>
-        )}
-
-        <div>
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           <div>
             <IconButton onClick={handleMenuClick} size="small">
               <MoreVertIcon />
