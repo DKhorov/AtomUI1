@@ -186,12 +186,6 @@ const fetchFavorites = async () => {
             </Link>
           </div>
           <div className='menu-item'>
-            <Link to="/chat">
-              <BsChat className="menu-icon" />
-              <span>Live Чаты</span>
-            </Link>
-          </div>
-          <div className='menu-item'>
             <Link to={`/account/profile/${user._id}`}>
               <BsFillPersonFill className="menu-icon" />
               <span className='menu-it'>Профиль</span>

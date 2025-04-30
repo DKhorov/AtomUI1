@@ -18,19 +18,7 @@ import { UserInfo } from '../../account/UserInfo';
 import '../../style/mobile-menu/mm.scss';
 import { 
   BsHouseDoor, 
-<<<<<<< HEAD
   BsChat,
-=======
-  BsPencilSquare, 
-  BsPerson, 
-  BsBook,
-  BsList,
-  BsSearch,
-  BsChat,
-  BsConeStriped,
-  BsCollectionPlayFill,
-  BsCodeSlash,
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
   BsCommand,
   BsFillHeartFill,
 } from 'react-icons/bs';
@@ -137,13 +125,6 @@ export const Mobile = () => {
           className='pro-avtr-o-io' 
         />
       </Link>
-<<<<<<< HEAD
-=======
-      <BsFillHeartFill className="menu-icon-z" onClick={handleOpenFavorites} />
-      <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
-      <Link to="/chat"><BsChat className="menu-icon-z" /></Link>
-
->>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
 
       <StyledModal
         open={openFavoritesModal}
