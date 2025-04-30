@@ -28,6 +28,7 @@ import { Send, Menu, Close, Group, Wifi, PersonAdd } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import io from 'socket.io-client';
+
 const PrivChat = () => {
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -37,9 +38,8 @@ const PrivChat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const [isSending, setIsSending] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [mobileOpen, setMobileOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [newChatOpen, setNewChatOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const messagesEndRef = useRef(null);
@@ -74,7 +74,6 @@ const PrivChat = () => {
     socket.current.on('messageError', ({ tempId, error }) => {
       setMessages(prev => prev.filter(msg => msg.tempId !== tempId));
       setError(error);
-      setIsSending(false);
     });
 
     return () => {
@@ -99,10 +98,6 @@ const PrivChat = () => {
 
         setCurrentUser(userData);
         setChats(chatsData);
-        
-        if (isMobile) {
-          setMobileOpen(true);
-        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -110,7 +105,7 @@ const PrivChat = () => {
       }
     };
     fetchData();
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -133,7 +128,6 @@ const PrivChat = () => {
     loadMessages();
   }, [selectedChat]);
 
-
   const createNewChat = async () => {
     if (!newUserId.trim()) return;
     
@@ -152,6 +146,8 @@ const PrivChat = () => {
         setChats(prev => [data, ...prev]);
         setNewChatOpen(false);
         setNewUserId('');
+        setSelectedChat(data);
+        if (isMobile) setMobileOpen(false);
       } else {
         setError(data.error || 'Ошибка создания чата');
       }
@@ -159,10 +155,11 @@ const PrivChat = () => {
       setError('Ошибка сети');
     }
   }
+
   const sendMessage = async (e) => {
     e.preventDefault();
     const messageText = newMessage?.trim();
-    if (!messageText) return;
+    if (!messageText || !selectedChat) return;
 
     const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
     const newMsg = {
@@ -174,7 +171,6 @@ const PrivChat = () => {
       tempId
     };
 
-    setIsSending(true);
     setMessages(prev => [...prev, newMsg]);
     setNewMessage('');
     
@@ -208,7 +204,6 @@ const PrivChat = () => {
       </Box>
     );
   }
-
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', bgcolor: 'background.default' }}>
@@ -292,11 +287,14 @@ const PrivChat = () => {
                     variant="dot"
                     color={isOnline ? "success" : "default"}
                   >
-                    <Avatar src={participant?.avatarUrl} />
+                    <Avatar 
+                      src={participant?.avatarUrl || '/default-avatar.png'}
+                      alt={participant?.fullName}
+                    />
                   </Badge>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={participant?.fullName}
+                  primary={participant?.fullName || 'Неизвестный пользователь'}
                   secondary={formatDistanceToNow(new Date(chat.lastActivity), { 
                     addSuffix: true, 
                     locale: ru 
@@ -341,13 +339,21 @@ const PrivChat = () => {
                 </IconButton>
               )}
               <Box display="flex" alignItems="center">
-                <Avatar 
-                  src={getParticipant(selectedChat)?.avatarUrl} 
-                  sx={{ mr: 2 }}
-                />
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                  color={isUserOnline(getParticipant(selectedChat)?._id) ? "success" : "default"}
+                >
+                  <Avatar 
+                    src={getParticipant(selectedChat)?.avatarUrl || '/default-avatar.png'} 
+                    sx={{ mr: 2 }}
+                    alt={getParticipant(selectedChat)?.fullName}
+                  />
+                </Badge>
                 <Box>
                   <Typography variant="subtitle1">
-                    {getParticipant(selectedChat)?.fullName}
+                    {getParticipant(selectedChat)?.fullName || 'Неизвестный пользователь'}
                   </Typography>
                   <Typography variant="caption" display="flex" alignItems="center">
                     {isUserOnline(getParticipant(selectedChat)?._id) ? (
@@ -459,9 +465,9 @@ const PrivChat = () => {
                     bgcolor: 'primary.dark'
                   }
                 }}
-                disabled={isSending || !newMessage.trim()}
+                disabled={!newMessage.trim()}
               >
-                {isSending ? <CircularProgress size={24} color="inherit" /> : <Send />}
+                <Send />
               </Button>
             </Box>
           </>
@@ -481,6 +487,16 @@ const PrivChat = () => {
             <Typography variant="h6" color="textSecondary">
               {chats.length === 0 ? 'У вас нет чатов' : 'Выберите чат'}
             </Typography>
+            {isMobile && (
+              <Button
+                variant="contained"
+                startIcon={<PersonAdd />}
+                onClick={() => setNewChatOpen(true)}
+                sx={{ mt: 2 }}
+              >
+                Создать чат
+              </Button>
+            )}
           </Box>
         )}
 
