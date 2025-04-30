@@ -13,13 +13,11 @@ const Header = ({ isAuth = false }) => {
   const [isModalmOpen, setIsModalmOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Проверка авторизации при загрузке компонента
   useEffect(() => {
     const token = window.localStorage.getItem('token');
     setIsAuthenticated(!!token || isAuth);
   }, [isAuth]);
 
-  // Проверка на мобильное устройство
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -35,16 +33,17 @@ const Header = ({ isAuth = false }) => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
-    setCurrentTime(`${hours}:${minutes}`);
+    const seconds = now.getSeconds().toString().padStart(2, '0'); // Добавляем секунды
+    setCurrentTime(`${hours}:${minutes}`); // Обновляем каждую секунду
   };
 
   useEffect(() => {
     if (isAuthenticated) {
-      updateTime();
-      const timerId = setInterval(updateTime, 60000);
+      updateTime(); // Первый вызов для мгновенного отображения
+      const timerId = setInterval(updateTime, 1000); // Интервал 1 секунда
       return () => clearInterval(timerId);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated]); // Зависимость от isAuthenticated
 
   useEffect(() => {
     const textTimer = setInterval(() => {

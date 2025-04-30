@@ -39,8 +39,10 @@ import {
   Share as ShareIcon,
   Report as ReportIcon,
   Code as CodeIcon,
-  Language as LanguageIcon
+  Language as LanguageIcon,
+  Close as CloseIcon // Добавлено здесь
 } from '@mui/icons-material';
+
 import styles from '../../style/post/post.scss';
 import { UserInfo } from '../../account/UserInfo';
 
@@ -111,15 +113,47 @@ export const Post = ({
   });
   const [favorite, setFavorite] = React.useState(isFavorite);
   const [isReacting, setIsReacting] = React.useState(false);
+<<<<<<< HEAD
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+=======
+  const [imageStatus, setImageStatus] = React.useState('loading'); // 'loading', 'loaded', 'error'
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
 
   React.useEffect(() => {
     setReactionData({ likesCount, dislikesCount, userReaction });
     setFavorite(isFavorite);
+<<<<<<< HEAD
   }, [likesCount, dislikesCount, userReaction, isFavorite]);
 
   const handleMenuClick = (e) => {
+=======
+    setImageStatus(imageUrl ? 'loading' : 'error');
+  }, [likesCount, dislikesCount, userReaction, imageUrl, isFavorite]);
+
+  const processImageUrl = (url) => {
+    if (!url) return null;
+    
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    const baseUrl = 'https://atomglidedev.ru';
+    return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+  };
+
+  const fullImageUrl = processImageUrl(imageUrl);
+
+  const handleImageLoad = () => {
+    setImageStatus('loaded');
+  };
+
+  const handleImageError = () => {
+    setImageStatus('error');
+  };
+
+  const onClickRemove = async (e) => {
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
     e.stopPropagation();
     setAnchorEl(e.currentTarget);
   };
@@ -172,6 +206,7 @@ export const Post = ({
     }
   };
 
+<<<<<<< HEAD
   const handleReport = (e) => {
     e.stopPropagation();
     handleMenuClose();
@@ -186,6 +221,11 @@ export const Post = ({
     } catch (err) {
       console.error('Ошибка удаления:', err);
       alert('Не удалось удалить пост');
+=======
+  const renderTags = () => {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return null;
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
     }
     setDeleteDialogOpen(false);
   };
@@ -261,6 +301,11 @@ export const Post = ({
 
   const processImageUrl = (url) => 
     url?.startsWith('http') ? url : `https://atomglidedev.ru${url}`;
+  const [isImageModalOpen, setIsImageModalOpen] = React.useState(false);
+
+  const handleImageOpen = () => setIsImageModalOpen(true);
+  const handleImageClose = () => setIsImageModalOpen(false);
+
 
   return (
     <div className='post-ad'>
@@ -268,13 +313,55 @@ export const Post = ({
         {/* Шапка поста */}
         <div className="post-header">
           <div onClick={(e) => { e.stopPropagation(); navigate(`/account/profile/${postAuthorId}`); }}>
-            <UserInfo 
-              {...user} 
-              additionalText={createdAt}
-              avatarUrl={processImageUrl(user?.avatarUrl)}
+          <UserInfo 
+<<<<<<< HEAD
+  {...user} 
+  additionalText={createdAt}
+  avatarUrl={processImageUrl(user?.avatarUrl)}
+  accountType={user.accountType} // Явно передаем тип аккаунта
+/>
+=======
+            {...user} 
+            additionalText={createdAt}
+            avatarUrl={user?.avatarUrl ? processImageUrl(user.avatarUrl) : ''}
+          />
+        </div>
+        
+        {fullImageUrl && imageStatus !== 'error' && (
+          <div className="J_HJKe">
+            {imageStatus === 'loading' && (
+              <div className="image-loading-placeholder">
+                Загрузка изображения...
+              </div>
+            )}
+            <div 
+              className="blurred-background"
+              style={{ 
+                backgroundImage: `url(${fullImageUrl})`,
+                display: imageStatus === 'loaded' ? 'block' : 'none'
+              }}
             />
+            <img
+              className='img-IKLS'
+              src={fullImageUrl}
+              alt={title}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              style={{ display: imageStatus === 'loaded' ? 'block' : 'none' }}
+              loading="lazy"
+            />         
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           </div>
 
+<<<<<<< HEAD
+=======
+        {imageStatus === 'error' && (
+          <div className="image-error-placeholder">
+          </div>
+        )}
+
+        <div>
+>>>>>>> 8c90a4cd4e62a436d19c4a207db3ea4f38687ee8
           <div>
             <IconButton onClick={handleMenuClick} size="small">
               <MoreVertIcon />
@@ -300,10 +387,7 @@ export const Post = ({
             
             {isAuthor && (
               <>
-                <MenuItem onClick={() => navigate(`/posts/${_id}/edit`)}>
-                  <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
-                  Редактировать
-                </MenuItem>
+
                 <MenuItem onClick={() => setDeleteDialogOpen(true)}>
                   <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
                   Удалить
@@ -320,27 +404,26 @@ export const Post = ({
 
         {/* Изображение */}
         {imageUrl && (
-          <div 
-            className="image-container"
-            onClick={() => !isFullPost && navigate(`/posts/${_id}`)}
-          >
-            <img
-              className='img-IKLS'
-              src={processImageUrl(imageUrl)}
-              alt={title}
-              loading="eager"
-            />
-          </div>
-        )}
-
+        <div 
+          className="image-container"
+          onClick={handleImageOpen} // Изменено здесь
+        >
+          <img
+            className='img-IKLS'
+            src={processImageUrl(imageUrl)}
+            alt={title}
+            loading="eager"
+          />
+        </div>
+      )}
         {/* Основной контент */}
         <div 
           className="post-content"
-          onClick={() => !isFullPost && navigate(`/posts/${_id}`)}
+         
         >
-          <h2 className='title-GHJ'>{title}</h2>
+          <h2 className='title-GHJ'  onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{title}</h2>
           
-          <p className='post-description'>{description}</p>
+          <p className='post-description'  onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{description}</p>
           
           {isFullPost && text && (
             <div className="description-GHJ">
@@ -374,9 +457,69 @@ export const Post = ({
                 {text}
               </ReactMarkdown>
             </div>
+            
           )}
 
-          {/* Мета-информация */}
+<Dialog
+        open={isImageModalOpen}
+        onClose={handleImageClose}
+        fullScreen
+        sx={{
+          '& .MuiDialog-paper': {
+            background: colors.background,
+            display: 'flex',
+            flexDirection: 'column',
+          }
+        }}
+      >
+        <DialogActions sx={{ p: 2, justifyContent: 'flex-end' }}>
+          <IconButton onClick={handleImageClose} sx={{ color: colors.text }}>
+          <CloseIcon fontSize="large" /> {/* Исправлено здесь */}
+
+          </IconButton>
+        </DialogActions>
+
+        <DialogContent sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative'
+        }}>
+          <img
+            src={processImageUrl(imageUrl)}
+            alt={title}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '80vh',
+              objectFit: 'contain',
+              borderRadius: '8px'
+            }}
+          />
+          
+          <Box sx={{
+            position: 'absolute',
+            bottom: 20,
+            left: 20,
+            right: 20,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: 'rgba(13, 17, 23, 0.8)',
+            padding: 2,
+            borderRadius: '8px',
+            backdropFilter: 'blur(8px)'
+          }}>
+            <UserInfo 
+              {...user} 
+              additionalText={new Date(createdAt).toLocaleDateString()}
+              avatarUrl={processImageUrl(user?.avatarUrl)}
+              sx={{ color: colors.text }}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
           <div className="meta-info">
             <div className='tags-GHJ'>
               <Chip

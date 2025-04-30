@@ -22,6 +22,9 @@ import { BsChatFill } from "react-icons/bs";
 import { BsFillCupHotFill } from "react-icons/bs";
 import { BsFillTagsFill } from "react-icons/bs";
 import { BsFillPersonFill } from "react-icons/bs";
+import { FaStore } from "react-icons/fa";
+import { BsBoxFill } from "react-icons/bs";
+import { FaCode } from "react-icons/fa";
 
 import { 
   BsHouseDoor, 
@@ -159,6 +162,12 @@ const fetchFavorites = async () => {
             </Link>  
           </div>
           <div className='menu-item'>
+            <Link to={`/code`}>
+              <FaCode className="menu-icon" />
+              <span className='menu-it'>Код</span>
+            </Link>
+          </div>
+          <div className='menu-item'>
           <Link to="/mini-apps">
     <BsFillTagsFill className="menu-icon" />
     <span className='menu-it'>Категории,темы</span>
@@ -171,15 +180,15 @@ const fetchFavorites = async () => {
             </Link>
           </div>
           <div className='menu-item'>
-            <Link to="/chat">
-              <BsFillRssFill className="menu-icon" />
-              <span className='menu-it'>Чат сообщества</span>
-            </Link>
-          </div>
-          <div className='menu-item'>
             <Link to="/priv">
               <BsChatFill className="menu-icon" />
               <span className='menu-it'>Чаты</span>
+            </Link>
+          </div>
+          <div className='menu-item'>
+            <Link to="/chat">
+              <BsChat className="menu-icon" />
+              <span>Live Чаты</span>
             </Link>
           </div>
           <div className='menu-item'>
@@ -188,12 +197,15 @@ const fetchFavorites = async () => {
               <span className='menu-it'>Профиль</span>
             </Link>
           </div>
+ 
+
           <div className='menu-item'>
                       <Link to={'/dock'}>
                         <BsConeStriped className="menu-icon" />
                         <span className='menu-it'>Дока</span>
                 </Link>
             </div>
+
         </div>
       </main>
 
