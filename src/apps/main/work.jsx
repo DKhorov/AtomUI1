@@ -4,92 +4,70 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchPosts, fetchTags } from '../../redux/slices/posts';
 import { selectIsAuth } from '../../redux/slices/auth';
 import axios from '../../axios';
-import { PostCreationPanel } from './PostCreationPanel';
-import { PostsTabs } from './PostsTabs';
-import { FollowingPanel } from './FollowingPanel';
+import { motion } from 'framer-motion';
 import '../../style/work/work.scss';
-import OnlineUsers from './OnlineUsers';
-import Ad from '../ad/ad';
+import image from './y.gif';
+import { PostsTabs } from './PostsTabs';
+import Newpost from '../new-post/newpost';
+import { Post } from '../post/post';
+import { Link } from 'react-router-dom';
+import Newpostm from '../new-post/newpost-mob';
 
 const Work = () => {
-  const [openModal, setOpenModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  useEffect(() => {
-    setModalMessage('Это бета тест 2 до вторика ');
-    setOpenModal(true);
-  }, []);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
   const { posts, tags } = useSelector(state => state.posts);
   const userData = useSelector(state => state.auth.data);
-  
-  const [activeTab, setActiveTab] = useState('home');
   const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const token = window.localStorage.getItem('token');
+    setIsAuthenticated(!!token || isAuth);
+    
+    // Проверяем ширину экрана при монтировании и при изменении размера
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, [isAuth]);
+
+  // State for tabs and post creation
+  const [activeTab, setActiveTab] = useState('home');
   const [showTextArea, setShowTextArea] = useState(false);
   const [showTagsInput, setShowTagsInput] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
-  
   const [isLoading, setLoading] = useState(false);
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [postTags, setPostTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-
+  const [isModalmOpen, setIsModalmOpen] = useState(false);
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
     setIsMounted(true);
   }, [dispatch]);
 
-  const isPostsLoading = posts.status === 'loading';
-  const isTagsLoading = tags.status === 'loading';
+  if (!window.localStorage.getItem('token') && !isAuth) {
+    return <Navigate to="/login" />;
+  }
+
+  const popularPosts = [...posts.items]
+    .sort((a, b) => (b.likes?.count || 0) - (a.likes?.count || 0))
+    .slice(0, 10);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setShowTextArea(false);
     setShowTagsInput(false);
     setShowImageUpload(false);
-  };
-
-  const onSubmit = async () => {
-    if (!title.trim()) {
-      setModalMessage('Пожалуйста, введите заголовок поста');
-      setOpenModal(true);
-      return;
-    }
-  
-    try {
-      setLoading(true);
-  
-      const postText = text.trim() || 'AtomGlide Post';
-      const postTagsValue = postTags.trim() || 'нет текста';
-  
-      const fields = {
-        title,
-        imageUrl,
-        tags: postTagsValue ? postTagsValue.split(',').map(tag => tag.trim()) : [],
-        text: postText,
-      };
-  
-      await axios.post('/posts', fields);
-      
-      setTitle('');
-      setText('');
-      setPostTags('');
-      setImageUrl('');
-      setShowTextArea(false);
-      setShowTagsInput(false);
-      setShowImageUpload(false);
-      
-      dispatch(fetchPosts());
-    } catch (err) {
-      console.warn(err);
-      setModalMessage('Ошибка при создании поста!');
-      setOpenModal(true);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const shuffleArray = (array) => {
@@ -108,89 +86,292 @@ const Work = () => {
     animationDelay: `${index * 0.1}s`
   });
 
-  if (!window.localStorage.getItem('token') && !isAuth) {
-    return <Navigate to="/login" />;
-  }
+  const isPostsLoading = posts.status === 'loading';
+  const isTagsLoading = tags.status === 'loading';
 
   return (
-    <>
-      {/* Баннер на весь экран */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'white',
-        textAlign: 'center',
-        padding: '20px',
-        fontSize: '24px'
-      }}>
-        <h1 style={{ fontSize: '48px', marginBottom: '30px' }}>AtomGlide</h1>
-        <p style={{ marginBottom: '20px' }}>Сейчас идут крупные работы на сайте</p>
-        <p style={{ marginBottom: '30px' }}>Мы внедряем важные изменения и улучшения</p>
-        <p>По всем вопросам вы можете обратиться к автору проекта:</p>
-        <a 
-          href="https://t.me/jpegweb" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            color: '#61dafb',
-            marginTop: '20px',
-            fontSize: '28px',
-            textDecoration: 'none'
-          }}
-        >
-          t.me/jpegweb
-        </a>
-        <p style={{ marginTop: '30px', fontSize: '18px' }}>добрый парень :)</p>
-      </div>
+    <div className="dark-github-home">
+      {/* Hero Section */}
+      {isAuthenticated && (
+        <>
+          <Newpost
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)}
+          />
+          <Newpostm
+            isOpen={isModalmOpen} 
+            onClick={() => setIsModalmOpen(true)}
+          />
+        </>
+      )}
+      <section className="hero-section">
+        <div className="hero-container">
+          <motion.div 
+            className="hero-left"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="hero-title">Built for developers</h1>
+            <p className="hero-text">
+              AtomGlide — проект, созданный для разработчиков. С его помощью они смогут делиться проектами, тренироваться и писать код на различных языках. Наше комьюнити, в котором уже более 150 человек, готово помочь каждому!
+            </p>
+          </motion.div>
+          
+          <motion.div 
+            className="hero-right"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <div className="hero-image-container">
+              <img 
+                src={image}
+                alt="Developer workspace" 
+                className="hero-image"
+              />
+              <motion.div 
+                className="image-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.3 }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-      <div className="work-panel" style={{ display: 'none' }}>
-        {userData ? (
-          <div className='panel-created'>
-            <div className="posts-container">
-              <OnlineUsers />
-              <Ad />
+      {/* Features Section */}
+      <section className="features-section">
+        <div className="features-container">
+          <motion.div 
+            className="features-header"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <h2 className="features-title">Get started with AtomGlide</h2>
+            <p className="features-subtitle">Начинай работу в AtomGlide</p>
+          </motion.div>
+          <center>
+              {isMobile ? <button className='white-bth' onClick={() => setIsModalmOpen(true)}>Создать пост</button> : <button className='white-bth' onClick={() => setIsModalOpen(true)}>Создать пост</button>  }          </center>
+
+          <div className="features-grid">
+            <Link to="/wallet">
+              <motion.div 
+                className="feature-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="card-icon">💳</div>
+                <h3 className="card-title">Wallet в AtomGlide</h3>
+                <p className="card-text">Совершай платежные операции в сети AtomGlide с помощью валюты Atom.</p>
+              </motion.div>
+            </Link>
+            {!isMobile && (
+              <motion.div 
+                onClick={() => setIsModalOpen(true)}
+                className="feature-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="card-icon">🌐</div>
+                <h3 className="card-title">AtomGlide Wizard</h3>
+                <p className="card-text">Мастер для создания постов.</p>
+              </motion.div>
               
-              <PostsTabs
-                activeTab={activeTab}
-                handleTabChange={handleTabChange}
-                posts={posts}
-                isPostsLoading={isPostsLoading}
-                userData={userData}
-                shuffledPosts={shuffledPosts}
-                getPostAnimationStyle={getPostAnimationStyle}
-                isMounted={isMounted}
-              />
-            </div>
+            )}
+            {!isMobile && (
+              <Link to="/code">
+              <motion.div 
+                className="feature-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="card-icon">⛏️</div>
+                <h3 className="card-title">AtomGlide Code</h3>
+                <p className="card-text">Удобный редактор кода, похожий на Visual Studio Code.</p>
+              </motion.div>
+            </Link>)}
+            {!isMobile && (
+            <Link to="/priv">
+              <motion.div 
+                className="feature-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="card-icon">⚡</div>
+                <h3 className="card-title">AtomGLide Chats</h3>
+                <p className="card-text">Присылай друзьям свои проекты в нашем мессенджере!</p>
+              </motion.div>
+            </Link>)}
           </div>
-        ) : (
-          <div className='panel-created'>
-            <div className="posts-container">
-              <PostsTabs
-                activeTab={activeTab}
-                handleTabChange={handleTabChange}
-                posts={posts}
-                isPostsLoading={isPostsLoading}
-                userData={userData}
-                shuffledPosts={shuffledPosts}
-                getPostAnimationStyle={getPostAnimationStyle}
-                isMounted={isMounted}
-              />
-            </div>
-          </div>
-        )}
+            
+           
+          
+          <motion.div 
+            className="see-more"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
+          >
+          </motion.div>
+        </div>
+      </section>
 
-        <FollowingPanel userData={userData} isMounted={isMounted} />
-      </div>
-    </>
+      {/* Repository Section */}
+      <section className="repository-section">
+        <center>
+          <div>
+            <h2 className="features-title">Рекомендации</h2>
+            <p className="features-subtitle">самые последние посты в atomglide</p>
+          </div>
+        </center>
+        <div className="repository-container">
+          {posts.items.map((post) => (
+            <Post
+              key={post._id}
+              _id={post._id}
+              imageUrl={post.imageUrl}
+              title={post.title}
+              text={post.text}
+              tags={post.tags}
+              language={post.language}
+              viewsCount={post.viewsCount}
+              commentsCount={post.commentsCount}
+              user={{
+                ...(post.user || {}),
+                accountType: post.user?.accountType,
+              }}
+              createdAt={post.createdAt}
+              isEditable={userData?._id === (post.user?._id || null)}
+              likesCount={post.likes?.count || 0}
+              dislikesCount={post.dislikes?.count || 0}
+              userReaction={post.userReaction}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Open Source Section */}
+      <section className="opensource-section">
+        <center>
+          <div>
+            <h2 className="features-title">Популярные посты</h2>
+            <p className="features-subtitle">самые Популярные посты в atomglide</p>
+          </div>
+        </center>
+        <div className="repository-container">
+          {popularPosts.length > 0 ? (
+            popularPosts.map((post, index) => (
+              <div 
+                key={post._id} 
+                className="post-animate"
+                style={getPostAnimationStyle(index)}
+              >
+                <Post
+                  _id={post._id}
+                  imageUrl={post.imageUrl}
+                  title={post.title}
+                  text={post.text}
+                  tags={post.tags}
+                  language={post.language}
+                  viewsCount={post.viewsCount}
+                  commentsCount={post.commentsCount}
+                  user={post.user || {}}
+                  createdAt={post.createdAt}
+                  isEditable={userData?._id === (post.user?._id || null)}
+                  likesCount={post.likes?.count || 0}
+                  dislikesCount={post.dislikes?.count || 0}
+                  userReaction={post.userReaction}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="no-posts-found">
+              <p>Нет популярных постов</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Tools Section */}
+      <section className="tools-section">
+        <div className="tools-container">
+          <motion.h2 
+            className="tools-title"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            Реклама
+          </motion.h2>
+          
+          <div className="tools-grid">
+            <motion.div 
+              className="tool-card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <h3 className="tool-title">Telegram канал автора</h3>
+              <p className="tool-text">DK Studio Community - тг канал автора новости про проект и другое https://t.me/@dkdevelop</p>
+            </motion.div>
+            
+            <motion.div 
+              className="tool-card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <h3 className="tool-title">ТикТок канал автора</h3>
+              <p className="tool-text">Обзоры про сервис только там @atomglide</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feed Section */}
+      <section className="feed-section">
+        <div className="feed-container">
+          <motion.h2 
+            className="feed-title"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            AtomGlide Version
+          </motion.h2>
+          
+          <motion.div 
+            className="feed-item"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            whileHover={{ scale: 1.01 }}
+          >
+            <div className="item-header">
+              <span className="username">AtomGlide</span>
+              <span className="action">Active version project</span>
+              <span className="time"></span>
+            </div>
+            <div className="item-content">
+              <span className="repo-name">v5.0</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
   );
 };
 
