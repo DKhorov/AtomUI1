@@ -11,7 +11,6 @@ import '../../style/work/work.scss';
 import OnlineUsers from './OnlineUsers';
 import Ad from '../ad/ad';
 
-
 const Work = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
@@ -114,51 +113,84 @@ const Work = () => {
   }
 
   return (
-    <div className="work-panel">
+    <>
+      {/* Баннер на весь экран */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        textAlign: 'center',
+        padding: '20px',
+        fontSize: '24px'
+      }}>
+        <h1 style={{ fontSize: '48px', marginBottom: '30px' }}>AtomGlide</h1>
+        <p style={{ marginBottom: '20px' }}>Сейчас идут крупные работы на сайте</p>
+        <p style={{ marginBottom: '30px' }}>Мы внедряем важные изменения и улучшения</p>
+        <p>По всем вопросам вы можете обратиться к автору проекта:</p>
+        <a 
+          href="https://t.me/jpegweb" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{
+            color: '#61dafb',
+            marginTop: '20px',
+            fontSize: '28px',
+            textDecoration: 'none'
+          }}
+        >
+          t.me/jpegweb
+        </a>
+        <p style={{ marginTop: '30px', fontSize: '18px' }}>добрый парень :)</p>
+      </div>
 
-      {userData ? (
-        <div className='panel-created'>
-          <div className="posts-container">
-          <OnlineUsers />
-          <Ad />
-
-
-            
-            
-            
-            <PostsTabs
-              activeTab={activeTab}
-              handleTabChange={handleTabChange}
-              posts={posts}
-              isPostsLoading={isPostsLoading}
-              userData={userData}
-              shuffledPosts={shuffledPosts}
-              getPostAnimationStyle={getPostAnimationStyle}
-              isMounted={isMounted}
-            />
-
+      <div className="work-panel" style={{ display: 'none' }}>
+        {userData ? (
+          <div className='panel-created'>
+            <div className="posts-container">
+              <OnlineUsers />
+              <Ad />
+              
+              <PostsTabs
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+                posts={posts}
+                isPostsLoading={isPostsLoading}
+                userData={userData}
+                shuffledPosts={shuffledPosts}
+                getPostAnimationStyle={getPostAnimationStyle}
+                isMounted={isMounted}
+              />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className='panel-created'>
-          <div className="posts-container">
-            <PostsTabs
-              activeTab={activeTab}
-              handleTabChange={handleTabChange}
-              posts={posts}
-              isPostsLoading={isPostsLoading}
-              userData={userData}
-              shuffledPosts={shuffledPosts}
-              getPostAnimationStyle={getPostAnimationStyle}
-              isMounted={isMounted}
-            />
+        ) : (
+          <div className='panel-created'>
+            <div className="posts-container">
+              <PostsTabs
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+                posts={posts}
+                isPostsLoading={isPostsLoading}
+                userData={userData}
+                shuffledPosts={shuffledPosts}
+                getPostAnimationStyle={getPostAnimationStyle}
+                isMounted={isMounted}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <FollowingPanel userData={userData} isMounted={isMounted} />
-      
-    </div>
+        <FollowingPanel userData={userData} isMounted={isMounted} />
+      </div>
+    </>
   );
 };
 
