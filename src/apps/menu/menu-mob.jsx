@@ -16,6 +16,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { keyframes, styled } from '@mui/system';
 import { UserInfo } from '../../account/UserInfo';
 import '../../style/mobile-menu/mm.scss';
+import { FaCode, FaWallet } from 'react-icons/fa';
+
 import { 
   BsHouseDoor, 
   BsChat,
@@ -109,7 +111,7 @@ export const Mobile = () => {
   return (
     <div className="mobile-menu">
       <Link to="/"><BsHouseDoor className="menu-icon-z" /></Link>
-      <Link to="/priv"><BsChat className="menu-icon-z" /></Link>
+      <Link to="/wallet"><FaWallet className="menu-icon-z" /></Link>
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
       <BsFillHeartFill 
         className="menu-icon-z" 
