@@ -14,64 +14,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import axios from '../../axios';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Post } from '../post/post';
-import { keyframes, styled } from '@mui/system';
 import { UserInfo } from '../../account/UserInfo';
-import { BsFillRssFill } from "react-icons/bs";
-import { BsChatFill } from "react-icons/bs";
-import { BsFillCupHotFill } from "react-icons/bs";
-import { BsFillTagsFill } from "react-icons/bs";
-import { BsFillPersonFill } from "react-icons/bs";
-import { FaStore } from "react-icons/fa";
-import { BsBoxFill } from "react-icons/bs";
-import { FaCode } from "react-icons/fa";
-
-import { 
-  BsHouseDoor, 
-  BsPerson, 
-  BsConeStriped,
-  BsCollectionPlayFill,
-  BsCodeSlash,
-  BsCommand,
-  BsChat,
-  BsFillHeartFill,
-} from 'react-icons/bs';
-
-// Анимация появления модального окна
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-// Анимация появления постов
-const slideIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-// Стилизованный компонент для модального окна
-const StyledModal = styled(Modal)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backdropFilter: 'blur(3px)',
-  animation: `${fadeIn} 0.3s ease-out forwards`,
-});
-
-// Стилизованный компонент для поста
-const AnimatedPost = styled('div')(({ delay }) => ({
-  animation: `${slideIn} 0.3s ease-out ${delay * 0.1}s forwards`,
-  opacity: 0,
-  position: 'relative',
-  border: '1px solid #30363d',
-  borderRadius: '6px',
-  padding: '16px',
-  backgroundColor: '#161b22',
-  transition: 'transform 0.2s',
-  '&:hover': {
-    transform: 'translateY(-5px)'
-  }
-}));
+import { BsHouseDoor, BsFillHeartFill, BsConeStriped } from 'react-icons/bs';
+import { FaCode, FaWallet } from 'react-icons/fa';
+import { BsFillTagsFill, BsFillPersonFill, BsChatFill } from 'react-icons/bs';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { styled } from '@mui/system';
 
 const Menu = () => {
   const dispatch = useDispatch();
@@ -81,6 +30,8 @@ const Menu = () => {
   const [openFavoritesModal, setOpenFavoritesModal] = useState(false);
   const [favoritePosts, setFavoritePosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Изменено на true для скрытия по умолчанию
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -88,23 +39,21 @@ const Menu = () => {
     dispatch(fetchTags());
   }, [dispatch]);
 
-  // В методе fetchFavorites обновляем обработку данных
-const fetchFavorites = async () => {
-  try {
-    setLoading(true);
-    const { data } = await axios.get('/users/favorites', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    // Убедимся, что получаем массив постов с полными данными
-    setFavoritePosts(data || []); // Было data.favorites || []
-  } catch (err) {
-    console.error('Error fetching favorites:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get('/users/favorites', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setFavoritePosts(data || []);
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOpenFavorites = async (e) => {
     e.preventDefault();
@@ -127,12 +76,19 @@ const fetchFavorites = async () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      
       setFavoritePosts(prev => prev.filter(post => post._id !== postId));
     } catch (err) {
       console.error('Error removing from favorites:', err);
       alert('Не удалось удалить из избранного');
     }
+  };
+
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   if (!user) {
@@ -143,183 +99,129 @@ const fetchFavorites = async () => {
   }
 
   return (
-    <div className='TV'>
-      <main className='menu-profile'>
-        <Avatar 
-          alt='' 
-          src={user.avatarUrl ? `https://atomglidedev.ru${user.avatarUrl}` : image} 
-          sx={{ width: 60, height: 60 }} 
-          className='pro-avtr-o' 
-        />
-        <h1 className='name-pre'>{user.fullName || 'Пользователь'}</h1>
-      </main>
-      <main className='menu'>
-        <div className="JKL">
-          <div className='menu-item'>
-            <Link to="/">
-              <BsHouseDoor className="menu-icon" />
-              <span className='menu-it'>Главная</span>
-            </Link>  
-          </div>
-          <div className='menu-item'>
-            <Link to={`/code`}>
-              <FaCode className="menu-icon" />
-              <span className='menu-it'>Код</span>
-            </Link>
-          </div>
-          <div className='menu-item'>
-          <Link to="/mini-apps">
-    <BsFillTagsFill className="menu-icon" />
-    <span className='menu-it'>Категории,темы</span>
-  </Link>
-          </div>
-          <div className='menu-item'>
-            <Link onClick={handleOpenFavorites}>
-              <BsFillHeartFill className="menu-icon" />
-              <span className='menu-it'>Избранное</span>
-            </Link>
-          </div>
-          <div className='menu-item'>
-            <Link to="/priv">
-              <BsChatFill className="menu-icon" />
-              <span className='menu-it'>Чаты</span>
-            </Link>
-          </div>
-          <div className='menu-item'>
-            <Link to={`/account/profile/${user._id}`}>
-              <BsFillPersonFill className="menu-icon" />
-              <span className='menu-it'>Профиль</span>
-            </Link>
-          </div>
- 
+    <>
+      <div className="mobile-menu-button" onClick={toggleMobileMenu}>
+        <MenuIcon fontSize="large" />
+      </div>
 
-          <div className='menu-item'>
-                      <Link to={'/dock'}>
-                        <BsConeStriped className="menu-icon" />
-                        <span className='menu-it'>Дока</span>
-                </Link>
-            </div>
-
+      <div className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <button className="collapse-btn" onClick={toggleCollapse}>
+            {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}
+          </button>
         </div>
-      </main>
-
-      <StyledModal
-        open={openFavoritesModal}
-        onClose={handleCloseFavorites}
-        aria-labelledby="favorites-modal-title"
-      >
-        <Box sx={{
-          width: '90%',
-          maxWidth: '1200px',
-          maxHeight: '90vh',
-          bgcolor: '#0d1117',
-          border: '1px solid #30363d',
-          borderRadius: '6px',
-          boxShadow: 24,
-          p: 4,
-          overflowY: 'auto',
-          color: '#c9d1d9',
-          outline: 'none'
-        }}>
-          <h2 id="favorites-modal-title" style={{ 
-            color: '#f0f6fc', 
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            <BookmarkIcon fontSize="large" />
-            Мои сохраненные посты
-          </h2>
+        <nav className="sidebar-menu">
+          <Link to="/" className="menu-item" onClick={() => setCollapsed(true)}>
+            <BsHouseDoor className="menu-icon" />
+            {!collapsed && <span className="menu-text">Главная</span>}
+          </Link>
           
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : favoritePosts.length > 0 ? (
-            <div style={{ 
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '20px'
-            }}>
-              {favoritePosts.map((post) => (
-                <div 
-                  key={post._id} 
-                  style={{
-                    position: 'relative',
-                    border: '1px solid #30363d',
-                    borderRadius: '6px',
-                    padding: '16px',
-                    backgroundColor: '#161b22',
-                    transition: 'transform 0.2s',
-                    '&:hover': {
-                      transform: 'translateY(-5px)'
-                    }
-                  }}
-                >
-                  <div onClick={() => navigate(`/posts/${post._id}`)} style={{ cursor: 'pointer' }}>
-                    <UserInfo 
-                      {...post.user} 
-                      additionalText={new Date(post.createdAt).toLocaleDateString()}
-                      avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
-                    />
-                    
-                    <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
-                    
-                    {post.imageUrl && (
-                      <img 
-                        src={`https://atomglidedev.ru${post.imageUrl}`} 
-                        alt={post.title}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'cover',
-                          borderRadius: '4px',
-                          marginBottom: '10px'
-                        }}
+          <Link to={`/code`} className="menu-item" onClick={() => setCollapsed(true)}>
+            <FaCode className="menu-icon" />
+            {!collapsed && <span className="menu-text">Код</span>}
+          </Link>
+          
+          <Link to="/mini-apps" className="menu-item" onClick={() => setCollapsed(true)}>
+            <BsFillTagsFill className="menu-icon" />
+            {!collapsed && <span className="menu-text">Категории</span>}
+          </Link>
+          
+          <Link onClick={(e) => {
+            handleOpenFavorites(e);
+            setCollapsed(true);
+          }} className="menu-item">
+            <BsFillHeartFill className="menu-icon" />
+            {!collapsed && <span className="menu-text">Избранное</span>}
+          </Link>
+          
+          <Link to="/priv" className="menu-item" onClick={() => setCollapsed(true)}>
+            <BsChatFill className="menu-icon" />
+            {!collapsed && <span className="menu-text">Чаты</span>}
+          </Link>
+          
+          <Link to={`/account/profile/${user._id}`} className="menu-item" onClick={() => setCollapsed(true)}>
+            <BsFillPersonFill className="menu-icon" />
+            {!collapsed && <span className="menu-text">Профиль</span>}
+          </Link>
+          
+          <Link to={`/wallet`} className="menu-item" onClick={() => setCollapsed(true)}>
+            <FaWallet className="menu-icon" />
+            {!collapsed && <span className="menu-text">Wallet</span>}
+          </Link>
+          
+          <Link to={'/dock'} className="menu-item" onClick={() => setCollapsed(true)}>
+            <BsConeStriped className="menu-icon" />
+            {!collapsed && <span className="menu-text">Дока</span>}
+          </Link>
+        </nav>
+
+        <Modal
+          open={openFavoritesModal}
+          onClose={handleCloseFavorites}
+          aria-labelledby="favorites-modal-title"
+          className="favorites-modal"
+        >
+          <Box className="modal-content">
+            <h2 id="favorites-modal-title">
+              <BookmarkIcon fontSize="large" />
+              Мои сохраненные посты
+            </h2>
+            
+            {loading ? (
+              <div className="loading-spinner">
+                <CircularProgress />
+              </div>
+            ) : favoritePosts.length > 0 ? (
+              <div className="favorites-grid">
+                {favoritePosts.map((post) => (
+                  <div key={post._id} className="favorite-item">
+                    <div onClick={() => {
+                      navigate(`/posts/${post._id}`);
+                      setCollapsed(true);
+                    }} className="post-content">
+                      <UserInfo 
+                        {...post.user} 
+                        additionalText={new Date(post.createdAt).toLocaleDateString()}
+                        avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
                       />
-                    )}
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8b949e' }}>
-                      <span>{post.viewsCount} просмотров</span>
+                      
+                      <h3>{post.title}</h3>
+                      
+                      {post.imageUrl && (
+                        <img 
+                          src={`https://atomglidedev.ru${post.imageUrl}`} 
+                          alt={post.title}
+                          className="post-image"
+                        />
+                      )}
+                      
+                      <div className="post-stats">
+                        <span>{post.viewsCount} просмотров</span>
+                      </div>
                     </div>
+                    
+                    <IconButton
+                      onClick={() => removeFromFavorites(post._id)}
+                      className="delete-btn"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
                   </div>
-                  
-                  <IconButton
-                    onClick={() => removeFromFavorites(post._id)}
-                    sx={{
-                      position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      color: '#f85149',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)'
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              height: '200px',
-              color: '#8b949e',
-              animation: `${fadeIn} 0.3s ease-out`
-            }}>
-              <BookmarkIcon sx={{ fontSize: '48px', mb: 2 }} />
-              <p style={{ textAlign: 'center' }}>
-                У вас пока нет сохраненных постов.<br />
-                Нажмите на значок закладки в постах, чтобы сохранить понравившиеся.
-              </p>
-            </Box>
-          )}
-        </Box>
-      </StyledModal>
-    </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-favorites">
+                <BookmarkIcon className="empty-icon" />
+                <p>
+                  У вас пока нет сохраненных постов.<br />
+                  Нажмите на значок закладки в постах, чтобы сохранить понравившиеся.
+                </p>
+              </div>
+            )}
+          </Box>
+        </Modal>
+      </div>
+    </>
   );
 };
 
