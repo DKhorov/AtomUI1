@@ -8,8 +8,9 @@ import { Mobile } from './apps/menu/menu-mob';
 import Dock from "./apps/menu/dock";
 import Profile from './account/account';
 import Chat from './apps/tools/chat';
-import Store from './apps/store/store';
 import Code from './code/index';
+import Wallet from './apps/wallet/wallet';
+import Store from './apps/store/store';
 
 import Priv from './apps/tools/priv';
 import { SnackbarProvider } from 'notistack';
@@ -76,21 +77,27 @@ const AppRouter = () => {
                 <Route
                   path="/"
                   element={
-                    <div className="flex-container">
+                    <div >
                       <Menu />
                       <Work />
                     </div>
                   }
+                  
                 />
                 <Route
                   path="/mini-apps"
                   element={
-                    <div className="flex-container">
+                    <div >
                       <Menu />
                       <MiniApps />
                     </div>
                   }
                 />
+                <Route path="/wallet" element={<div >
+                  <Menu />
+                  <Wallet />
+                </div>} />
+
                 
                 <Route path="/posts/:id" element={<FullPost />} />
                 <Route path="/account/profile/:id?" element={<Profile />} />

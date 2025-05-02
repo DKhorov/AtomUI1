@@ -1,284 +1,294 @@
-/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+// menu.scss
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: #24292e;
 
-.menu {
-  width: 300px;
-  height: 420px !important;
-  background-color: #0f141a;
-  border: solid 1px #31373F;
-  margin-left: 30px;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  border-radius: 10px;
-  margin-top: 20px;
+  border-right: 1px solid #30363d;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
   transition: all 0.3s ease;
+  overflow-y: hidden;
+  padding: 15px 0;
 
-  @media (max-width: 480px) {
-      display: none;
-  }
-  @media (max-width: 1200px) {
+  &.collapsed {
     width: 70px;
+    align-items: center;
+    overflow-y: hidden;
+
+    .user-name,
+    .menu-text {
+      display: none;
+    }
+    overflow-y: hidden;
+
+    .sidebar-header {
+      justify-content: center;
+      padding: 0;
+    }
+
+    .user-info {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    transform: translateX(-100%);
     
-}
-}
-@media (max-width: 1200px) {
+    &.mobile-open {
+      transform: translateX(0);
+      overflow-y: hidden;
 
-}
-@font-face {
-  font-family: 'SF Pro Text';
-  src: url('../font/SFProText-Bold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+  }
 }
 
-.JKL {
-  padding-top: 5px;
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px 15px;
+  border-bottom: 1px solid #30363d;
+  margin-bottom: 15px;
 }
 
-.menu-profile {
-  width: 300px;
-  height: 100px !important;
-  background-color: #10151b;
-  border: solid 1px #31373F;
-  margin-top: 70px;
-  margin-left: 30px;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  border-radius: 20px;
+.user-info {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px !important;
+  height: 40px !important;
   transition: all 0.3s ease;
-
-  @media (max-width: 1200px) {
-      display: none;
-
-  }
 }
 
-.pro-avtr-o {
-  margin-left: 20px;
-}
-
-.menu-item {
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 10px;
-  background-color: #10151b;
-  border-radius: 5px;
-  padding: 10px 15px;
-  transition: 0.2s;
-  
-  a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.3s ease;
-    
-  }
-}
-@media (max-width: 1200px) {
- 
-  .menu{
-    margin-top: 70px;
-    margin-left: 20px;
-    height: auto;
-  }
-  .menu-item {
-    margin-left:8px;
-  }
-  .menu-it{
-    display: none;
-  }
-}
-.menu-icon {
-  font-size: 20px;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.menu-ad {
-  cursor: default;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  margin-top: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-bottom: 30px;
-  height:110px;
-  -webkit-box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
-  -moz-box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
-  box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
-  background: rgb(11,11,11);
-  background: -moz-linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
-  background: -webkit-linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
-  background: linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0b0b0b",endColorstr="#5d5d5d",GradientType=1);
-  border-radius: 5px;
-
-  @media (max-width: 480px) {
-      display: none;
-  }
-}
-
-a {
-  color: white;
-  font-family: "JetBrains Mono", monospace;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  text-decoration: none;
-}
-
-.menu-item:hover {
-  background-color: #333232;
-}
-
-.menu-item2:hover {
-  background-color: #28699f;
-  color: white;
-}
-.name-pre {
-  color: white;
-  font-family: 'SF Pro Text';
-  margin-left: 15px;
-  width: 200px;
-
-  font-weight: 200;
-  transition: all 0.3s ease;
-  font-size: clamp(12px, 2vw, 20px); /* Минимальный 12px, максимальный 20px */
+.user-name {
+  color: #f0f6fc;
+  font-size: 16px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 150px;
 }
 
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #c9d1d9;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 
-.ad-text {
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  padding-top: 10px;
-  margin-left: 18px;
-  width: 200px;
-  font-size: 23px;
-  font-weight: 200;
+  &:hover {
+    background-color: #161b22;
+    color: #f0f6fc;
+  }
 }
 
-// Стили для модального окна
-.MuiModal-root {
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: #c9d1d9;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #161b22;
+    color: #f0f6fc;
+  }
+
+  .menu-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+  }
+
+  .menu-text {
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+/* Mobile menu button */
+.mobile-menu-button {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 90;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  color: #f0f6fc;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+/* Modal styles */
+.favorites-modal {
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(3px);
 }
 
-// Анимация при наведении на посты в модальном окне
-[style*="gridTemplateColumns"] > div {
-  transition: transform 0.2s ease;
-  
-  &:hover {
-      transform: translateY(-5px);
+.modal-content {
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 20px;
+  overflow-y: auto;
+  color: #c9d1d9;
+  outline: none;
+
+  h2 {
+    color: #f0f6fc;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
   }
 }
 
-.TV {
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.favorite-item {
+  position: relative;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 16px;
+  background-color: #161b22;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.post-content {
+  cursor: pointer;
+
+  h3 {
+    color: #f0f6fc;
+    margin: 10px 0;
+    font-size: 16px;
+  }
+}
+
+.post-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.post-stats {
+  display: flex;
+  justify-content: space-between;
+  color: #8b949e;
+  font-size: 13px;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #f85149 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.empty-favorites {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #8b949e;
+  text-align: center;
 
-  @media (max-width: 480px) {
-      display: none;
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #8b949e;
+  }
+
+  p {
+    line-height: 1.5;
   }
 }
 
-// Анимации для модального окна
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+// Добавьте это в ваш menu.scss
+@media (max-width: 768px) {
+  .mobile-menu-button{
+    display: none;
 
-// Стили для постов в модальном окне
-.post-ad {
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-}
+  .sidebar {
+    display: none;
 
-@media (max-width: 480px) {
-  .menu-profile {
-      display: none;
-  }
-  
-  .TV {
-      display: none;
-  }
-  
-  .menu {
-      display: none;
-  }
-  
-  .menu-ad {
-      display: none;
-  }
-}
-
-.tema {
-  padding: 20px;
-  margin-left: 30px;
-  background-color: #0D1116;
-  border: solid 1px #31373F;
-  margin-top: 20px;
-  border-radius: 10px;
-
-  .t-title {
-    color: #f0f6fc;
-    font-size: 1.5rem;
-    margin-bottom: 0;
-    padding-bottom: 1px;
-  }
-
-  .themes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    margin-top: 15px;
-
-    .theme-item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      border-radius: 8px;
-      padding-bottom: 15px;
-
-      transition: all 0.2s ease;
-      text-decoration: none;
-      color: #c9d1d9;
-
-
-
-      .theme-info {
-        h3 {
-          margin: 0;
-          font-size: 1rem;
-          color: #f0f6fc;
-        }
-
-        span {
-          font-size: 0.8rem;
-          color: #8b949e;
-        }
-      }
+    
+    &.mobile-open {
+      display: block;
+      position: fixed;
+      z-index: 1000;
+      background: white;
+      height: 100vh;
+      width: 80%;
+      top: 0;
+      left: 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
+  }
+  
+
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-button {
+    display: none;
   }
 }
