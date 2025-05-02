@@ -1,105 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { fetchUser, selectUser } from '../../redux/slices/getme';
 import '../../style/header/style.css';
 import { Link } from 'react-router-dom';
-import Newpost from '../new-post/newpost';
-import Newpostm from '../new-post/newpost-mob';
+import Avatar from '@mui/material/Avatar';
+import image from './Group 7.png';
+import { selectIsAuth } from '../../redux/slices/auth';
 
-const Header = ({ isAuth = false }) => {
-  const [currentTime, setCurrentTime] = useState('');
-  const [isFlipping, setIsFlipping] = useState(false);
-  const [currentText, setCurrentText] = useState('AtomGlide');
-  const [isMobile, setIsMobile] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalmOpen, setIsModalmOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const token = window.localStorage.getItem('token');
-    setIsAuthenticated(!!token || isAuth);
-  }, [isAuth]);
-
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
-
-  const updateTime = () => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0'); // Добавляем секунды
-    setCurrentTime(`${hours}:${minutes}`); // Обновляем каждую секунду
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      updateTime(); // Первый вызов для мгновенного отображения
-      const timerId = setInterval(updateTime, 1000); // Интервал 1 секунда
-      return () => clearInterval(timerId);
-    }
-  }, [isAuthenticated]); // Зависимость от isAuthenticated
-
-  useEffect(() => {
-    const textTimer = setInterval(() => {
-      setIsFlipping(true);
-      setTimeout(() => {
-        setCurrentText(prev => 
-          prev === 'AtomGlide' 
-            ? (isMobile ? 'Привет Мир!' : 'Скользи по волнам контента') 
-            : 'AtomGlide'
-        );
-        setIsFlipping(false);
-      }, 500);
-    }, 10000);
-
-    return () => clearInterval(textTimer);
-  }, [isMobile]);
+const Header = () => {
+  const user = useSelector(selectUser);
+  const isAuth = useSelector(selectIsAuth);
 
   return (
-    <header className="panel-center">
-      <div className="panel">
-        {isAuthenticated && (
-          <div className='balls-2' title='Валюта сервиса (читай доку)'>
-            {isMobile ? (
-              <h5 className='bl' onClick={() => setIsModalmOpen(true)}>Создать пост</h5>
-            ) : (
-              <h5 className='bl' onClick={() => setIsModalOpen(true)}>Создать пост</h5>
-            )}
-          </div>
-        )}
-        
-        <Link 
-          to="/" 
-          className={`panel-text ${isFlipping ? 'flipping' : ''} ${isMobile ? 'mobile-text' : ''}`}
-        >
-          {currentText}
-        </Link>
-        
-        {isAuthenticated && (
-          <div className='balls' title='Текущее время'>
-            <h5 className='bl'>{currentTime}</h5>
-          </div>
-        )}
+    <header className="github-header">
+      <div className="header-container">
+        <div className="header-left">
+        <Link to="/" >
+          <Avatar 
+                alt={user?.fullName || 'User'} 
+                src={image}
+                sx={{ width: 32, height:32 }}
+              /></Link>
+                          <Link to="/" className="nav-linkr">AtomGlide</Link>
+
+        </div>
+        <div className="header-right">
+          
+          {isAuth ? (
+            <div className="user-info-header">
+              <Avatar 
+                alt={user?.fullName || 'User'} 
+                src={user?.avatarUrl ? `https://atomglidedev.ru${user.avatarUrl}` : image} 
+                sx={{ width: 32, height:32 }}
+              />
+              <span className="user-name">{user?.fullName || 'User'}</span>
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <Link to="/login" className="sign-in">Sign in</Link>
+              <Link to="/register" className="sign-up">Sign up</Link>
+            </div>
+          )}
+        </div>
       </div>
-      
-      {isAuthenticated && (
-        <>
-          <Newpost
-            isOpen={isModalOpen} 
-            onClose={() => setIsModalOpen(false)}
-          />
-          <Newpostm
-            isOpen={isModalmOpen} 
-            onClose={() => setIsModalmOpen(false)}
-          />
-        </>
-      )}
     </header>
   );
 };
