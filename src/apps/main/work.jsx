@@ -49,6 +49,7 @@ const Work = () => {
   const [postTags, setPostTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isModalmOpen, setIsModalmOpen] = useState(false);
+  
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
@@ -62,6 +63,11 @@ const Work = () => {
   const popularPosts = [...posts.items]
     .sort((a, b) => (b.likes?.count || 0) - (a.likes?.count || 0))
     .slice(0, 10);
+
+  // Сортировка постов по дате (сначала новые)
+  const sortedPosts = [...posts.items].sort((a, b) => {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -236,7 +242,7 @@ const Work = () => {
           </div>
         </center>
         <div className="repository-container">
-          {posts.items.map((post) => (
+          {sortedPosts.map((post) => (
             <Post
               key={post._id}
               _id={post._id}
