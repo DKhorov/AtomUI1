@@ -250,7 +250,7 @@ export const Post = ({
       }
     } catch (err) {
       console.error('Ошибка реакции:', err);
-      alert('Не удалось обновить реакцию');
+      alert('Бро ты уже ставил эту реакцию на пост ');
       setReactionData({
         likesCount,
         dislikesCount,
@@ -306,15 +306,7 @@ export const Post = ({
               Поделиться
             </MenuItem>
             
-            {isAuthor && (
-              <>
-
-                <MenuItem onClick={() => setDeleteDialogOpen(true)}>
-                  <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
-                  Удалить
-                </MenuItem>
-              </>
-            )}
+      
             
             <MenuItem onClick={handleReport}>
               <ListItemIcon><ReportIcon fontSize="small" /></ListItemIcon>
