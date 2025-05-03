@@ -15,12 +15,20 @@ import axios from '../../axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import { keyframes, styled } from '@mui/system';
 import { UserInfo } from '../../account/UserInfo';
-import '../../style/mobile-menu/mm.scss';
-import { FaCode, FaWallet } from 'react-icons/fa';
 
+import '../../style/mobile-menu/mm.scss';
 import { 
   BsHouseDoor, 
-  BsChat,
+  BsPencilSquare, 
+  BsPerson, 
+  BsBook,
+  BsList,
+  BsSearch,
+  BsUbuntu,
+    BsChat,
+  BsConeStriped,
+  BsCollectionPlayFill,
+  BsCodeSlash,
   BsCommand,
   BsFillHeartFill,
 } from 'react-icons/bs';
@@ -58,15 +66,12 @@ export const Mobile = () => {
       setModalLoading(true);
       const { data } = await axios.get('/users/favorites', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}` // Восстановлены заголовки
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      // Расширенная проверка структуры данных
-      const posts = Array.isArray(data) ? data : data?.favorites || [];
-      setFavoritePosts(posts);
-      console.log('Fetched favorites:', posts); // Логирование для отладки
+      setFavoritePosts(data.favorites || []);
     } catch (err) {
-      console.error('Error fetching favorites:', err.response?.data || err.message);
+      console.error('Error fetching favorites:', err);
     } finally {
       setModalLoading(false);
     }
@@ -78,12 +83,8 @@ export const Mobile = () => {
       alert('Для просмотра избранного нужно авторизоваться');
       return;
     }
-    try {
-      await fetchFavorites();
-      setOpenFavoritesModal(true);
-    } catch (err) {
-      console.error('Failed to open favorites:', err);
-    }
+    setOpenFavoritesModal(true);
+    await fetchFavorites();
   };
 
   const handleCloseFavorites = () => {
@@ -94,12 +95,12 @@ export const Mobile = () => {
     try {
       await axios.delete(`/users/favorites/${postId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}` // Добавлены заголовки
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       setFavoritePosts(prev => prev.filter(post => post._id !== postId));
     } catch (err) {
-      console.error('Error removing from favorites:', err.response?.data || err.message);
+      console.error('Error removing from favorites:', err);
       alert('Не удалось удалить из избранного');
     }
   };
@@ -110,15 +111,13 @@ export const Mobile = () => {
 
   return (
     <div className="mobile-menu">
+      {/* Все иконки меню */}
       <Link to="/"><BsHouseDoor className="menu-icon-z" /></Link>
-      <Link to="/wallet"><FaWallet className="menu-icon-z" /></Link>
+      <Link to="/сhat"><BsChat className="menu-icon-z" /></Link>
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
-      <BsFillHeartFill 
-        className="menu-icon-z" 
-        onClick={handleOpenFavorites} 
-        style={{ cursor: 'pointer' }} // Добавлен стиль для кликабельности
-      />
+      <BsFillHeartFill className="menu-icon-z" onClick={handleOpenFavorites} />
       
+      {/* Аватар пользователя */}
       <Link to={`/account/profile/${user._id}`}>
         <Avatar 
           alt='' 
@@ -128,6 +127,7 @@ export const Mobile = () => {
         />
       </Link>
 
+      {/* Модальное окно избранного */}
       <StyledModal
         open={openFavoritesModal}
         onClose={handleCloseFavorites}
@@ -177,21 +177,20 @@ export const Mobile = () => {
                     padding: '16px',
                     backgroundColor: '#161b22',
                     transition: 'transform 0.2s',
-                    ':hover': {
+                    '&:hover': {
                       transform: 'translateY(-5px)'
                     }
                   }}
                 >
-                  <div 
-                    onClick={() => navigate(`/posts/${post._id}`)} 
-                    style={{ cursor: 'pointer' }}
-                  >
+                  <div onClick={() => navigate(`/posts/${post._id}`)} style={{ cursor: 'pointer' }}>
                     <UserInfo 
                       {...post.user} 
                       additionalText={new Date(post.createdAt).toLocaleDateString()}
                       avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
                     />
+                    
                     <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
+                    
                     {post.imageUrl && (
                       <img 
                         src={`https://atomglidedev.ru${post.imageUrl}`} 
@@ -205,15 +204,14 @@ export const Mobile = () => {
                         }}
                       />
                     )}
+                    
                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8b949e' }}>
                       <span>{post.viewsCount} просмотров</span>
                     </div>
                   </div>
+                  
                   <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation(); // Предотвращает навигацию при клике на кнопку
-                      removeFromFavorites(post._id);
-                    }}
+                    onClick={() => removeFromFavorites(post._id)}
                     sx={{
                       position: 'absolute',
                       top: '8px',

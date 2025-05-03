@@ -8,7 +8,7 @@ const OnlineUsers = () => {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
 
-  const phrases = [" Wallet.", " simple.", " React.", " Java.", " fun!"];
+  const phrases = [" nerdy.", "simple.", "pure JS.", "pretty.", "fun!"];
   const period = 2000;
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const OnlineUsers = () => {
         fontSize: '3.5rem',
         color: 'inherit'
       }}>
-        AtomGlide 4 is
+        AtomGlide 1.0 is
         <span style={{ 
           borderRight: '0.08em solid #666',
           paddingRight: '2px',
@@ -75,7 +75,14 @@ const OnlineUsers = () => {
         </span>
       </Typography>
       
-
+      <Typography variant="h2" sx={{ 
+        fontWeight: 200,
+        margin: '0.4em 0',
+        fontSize: '2rem',
+        color: '#888'
+      }}>
+        Нажми &lt; создать пост &gt; вверху страницы .
+      </Typography>
     </div>
   );
 };
