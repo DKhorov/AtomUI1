@@ -440,7 +440,7 @@ accountType={user?.accountType} // Используйте опциональну
 >
   {title}
 </h2>
-        <p className='post-description2' onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{description}</p>
+        <p className='post-description2' >{description}</p>
         {/* Изображение */}
         {imageUrl && (
         <div 
@@ -452,6 +452,7 @@ accountType={user?.accountType} // Используйте опциональну
             src={processImageUrl(imageUrl)}
             alt={title}
             loading="eager"
+            onClick={() => !isFullPost && navigate(`/posts/${_id}`)}
           />
         </div>
       )}
