@@ -5,6 +5,33 @@
   box-sizing: border-box;
 }
 
+// Mobile message
+.mobile-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1e1e1e;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-family: 'SF Pro Text', sans-serif;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #007acc;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+}
 
 // Main container
 .codes {
@@ -136,6 +163,67 @@
   height: calc(100vh - 50px);
   width: 100%;
   margin-top: 50px;
+  position: relative;
+
+  &.maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    margin-top: 0;
+    height: 100vh;
+  }
+}
+
+.window-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 1001;
+  -webkit-app-region: drag;
+}
+
+.window-title {
+  color: #fff;
+  font-family: 'SF Pro Text', sans-serif;
+  font-size: 0.9rem;
+}
+
+.window-buttons {
+  display: flex;
+  gap: 10px;
+  -webkit-app-region: no-drag;
+
+  button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:last-child:hover {
+      background: #e81123;
+    }
+  }
 }
 
 .file-manager {
@@ -419,6 +507,26 @@
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
+}
+
+.menu-bar {
+  display: flex;
+  gap: 20px;
+  padding-left: 20px;
+
+  .menu-item {
+    color: #fff;
+    font-family: 'SF Pro Text', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
 }
 
 .code-info {

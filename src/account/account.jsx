@@ -78,33 +78,7 @@ const Profile = () => {
       owner: '---',
       dateAcquired: " 27.04.2025 до 05.05.2025"
     },
-    {
-      id: 3,
-      image: image3,
-      title: "Black Emoji",
-      description: "Это NFT из новой коллекции AtomGlide Black Emoji, выпущенной в честь 100-го поста в AtomGlide",
-      rarity: "Легендарный",
-      owner: `---`,
-      dateAcquired: " 28.04.2025 до 05.05.2025"
-    },
-    {
-      id: 5,
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png',
-      title: "Linux",
-      description: "Это NFT в честь Linux Ubuntu",
-      rarity: "Легендарный",
-      owner: `---`,
-      dateAcquired: " 28.04.2025 до 05.05.2025"
-    },
-    {
-      id: 6,
-      image: image4,
-      title: "AtomCode",
-      description: "Это NFT в честь выпуска редактора кода в AtomGlide",
-      rarity: "Легендарный",
-      owner: `---`,
-      dateAcquired: " 28.04.2025 до 05.05.2025"
-    },
+
   ];
 
   const getAvatarUrl = (avatarPath) => 
@@ -134,6 +108,14 @@ const Profile = () => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   const handleGifClick = (gif) => {
     setSelectedGif(gif);
@@ -289,8 +271,8 @@ const Profile = () => {
               alt={state.user.fullName} 
               src={getAvatarUrl(state.user.avatarUrl)} 
               sx={{ 
-                width: 150, 
-                height: 150,
+                width: 90, 
+                height: 90,
                 border: '5px solid white',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
               }} 
@@ -316,7 +298,7 @@ const Profile = () => {
         
         <div className="profile-actions">
           <div className='op'>
-          {isCurrentUser ? (
+          {isCurrentUser ? (<div className='dsdf'>
             <button
               variant="outlined"
               startIcon={<EditIcon />}
@@ -325,6 +307,23 @@ const Profile = () => {
             >
               Редактировать
             </button>
+            <button
+            variant="outlined"
+           
+            onClick={() => navigate(`/wallet`)}
+            className="white-bth1"
+          >
+            Wallet
+          </button>
+          <button
+            variant="outlined"
+           
+            onClick={() => navigate(`/dock`)}
+            className="white-bth1"
+          >
+            Dock
+          </button>
+          </div>
           ) : (
             <button
               variant={state.isSubscribed ? "outlined" : "contained"}
@@ -355,41 +354,29 @@ const Profile = () => {
           <div className='d'>
             <div className="banner-pro">
               <div className="pro-flex">
-                <p className='pro-title'>Имя пользователя</p>
-                <p className='pro-username'>@{state.user.username?.replace('@', '')}</p>
+                <p className='pro-title' onClick={() => handleCopy(`@${state.user.username?.replace('@', '')}`, 'Имя пользователя скопировано')}>Имя пользователя</p>
+                <p className='pro-username' onClick={() => handleCopy(`@${state.user.username?.replace('@', '')}`, 'Имя пользователя скопировано')}>@{state.user.username?.replace('@', '')}</p>
               </div>
-              <IconButton 
-                onClick={() => handleCopy(`@${state.user.username?.replace('@', '')}`, 'Имя пользователя скопировано')}
-                className="copy-button"
-              >
-                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px", marginRight:"30px" }} />
-              </IconButton>
+           
             </div>
             
             <div className="banner-pro1">
               <div className="pro-flex">
-                <p className='pro-title'>Дата регистрации</p>
-                <p className='pro-username'>{new Date(state.user.createdAt).toLocaleDateString()}</p>
+                <p className='pro-title' onClick={() => handleCopy(new Date(state.user.createdAt).toLocaleDateString(), 'Дата регистрации скопирована')}>Дата регистрации</p>
+                <p className='pro-username'onClick={() => handleCopy(new Date(state.user.createdAt).toLocaleDateString(), 'Дата регистрации скопирована')} >{new Date(state.user.createdAt).toLocaleDateString()}</p>
               </div>
-              <IconButton 
-                onClick={() => handleCopy(new Date(state.user.createdAt).toLocaleDateString(), 'Дата регистрации скопирована')}
-                className="copy-button"
-              >
-                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px" , marginRight:"30px"}} />
-              </IconButton>
+             
             </div>
             
             <div className="banner-pro1">
               <div className="pro-flex">
-                <p className='pro-title'>ID пользователя</p>
-                <p className='pro-username'>{state.user._id}</p>
+                <p className='pro-title' onClick={() => handleCopy(state.user._id, 'ID пользователя скопирован')}>ID пользователя</p>
+                <p className='pro-username' onClick={() => handleCopy(state.user._id, 'ID пользователя скопирован')}>{state.user._id}</p>
               </div>
-              <IconButton 
-                onClick={() => handleCopy(state.user._id, 'ID пользователя скопирован')}
-                className="copy-button"
-              >
-                <IoCopy style={{ color: "rgb(0, 140, 255)", fill: "rgb(0, 140, 255)", width: "25px", height: "25px" , marginRight:"30px" }} />
-              </IconButton>
+           
+                <div className="ddd">
+
+                </div>
             </div>
             
             <div className="banner-pro2">
@@ -438,7 +425,8 @@ const Profile = () => {
                         <h2 className="posts-title">{isCurrentUser ? 'Мои публикации' : 'Публикации'}</h2>
                         
                         {hasPosts ? (
-                          <Grid container spacing={3}>
+                          <Grid container spacing={3}>                                 
+
                             {state.posts.map(post => (
                                 <Post
                                   _id={post._id}
@@ -449,7 +437,6 @@ const Profile = () => {
                                   viewsCount={post.viewsCount}
                                   user={state.user}
                                   createdAt={post.createdAt}
-                                  isEditable={isCurrentUser}
                                   likesCount={post.likes?.count || 0}
                                   dislikesCount={post.dislikes?.count || 0}
                                   userReaction={post.userReaction}

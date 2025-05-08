@@ -14,8 +14,19 @@ const Code = () => {
   const [projectType, setProjectType] = useState('html');
   const [showProjectsList, setShowProjectsList] = useState(false);
   const [projects, setProjects] = useState({});
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Проверяем, является ли устройство мобильным
+    const checkIfMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
+    
+    if (checkIfMobile()) {
+      setIsMobile(true);
+      return;
+    }
+
     const savedProjects = JSON.parse(localStorage.getItem('projects') || '{}');
     setProjects(savedProjects);
   }, []);
@@ -57,9 +68,30 @@ const Code = () => {
     setActiveProject(updatedProject);
   };
 
+  const handleCloseProject = () => {
+    setActiveProject(null);
+  };
+
+  if (isMobile) {
+    return (
+      <div className="mobile-message">
+        <h1>AtomGlide Code</h1>
+        <p>Редактор кода недоступен на мобильных устройствах.</p>
+        <p>Пожалуйста, используйте компьютер для работы с редактором.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="codes">
-      <div className="panel-code"></div>
+      <div className="panel-code">
+        <div className="menu-bar">
+          <span className="menu-item">Файл</span>
+          <span className="menu-item">Правка</span>
+          <span className="menu-item">Вид</span>
+          <span className="menu-item">Справка</span>
+        </div>
+      </div>
 
       {!activeProject ? (
         <div className="codes-container">
@@ -174,6 +206,7 @@ const Code = () => {
         <Workspace 
           project={activeProject} 
           onProjectSave={handleSaveProject}
+          onCloseProject={handleCloseProject}
         />
       )}
 
