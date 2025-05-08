@@ -150,13 +150,7 @@ export const FullPost = () => {
       </div>
 
       <div className="comment-actions">
-        <Button 
-          startIcon={<ReplyIcon />}
-          onClick={() => setReplyingTo(comment._id)}
-          className="comment-action-btn"
-        >
-          Ответить
-        </Button>
+
         {(userData?._id === comment.user?._id || userData?.isAdmin) && (
           <Button 
             startIcon={<DeleteIcon />}
@@ -240,22 +234,13 @@ export const FullPost = () => {
         <>
           <Post {...post} isFullPost={true} />
           
-          <div className="post-actions-full">
-            <Button startIcon={<FileDownloadIcon />} onClick={handleDownload}>
-              Скачать
-            </Button>
-            <Button startIcon={<ShareIcon />} onClick={handleShare}>
-              Поделиться
-            </Button>
-          </div>
-
           <div className="comments-section">
             <h3>Комментарии ({commentsCount})</h3>
             
             {userData ? (
               <div className="comment-form">
-                <Avatar src={processImageUrl(userData.avatarUrl)} />
-                <TextField
+                <input
+                  type="text"
                   multiline
                   rows={3}
                   value={newComment}
