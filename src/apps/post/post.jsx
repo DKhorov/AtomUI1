@@ -369,7 +369,7 @@ export const Post = ({
 
 console.log(description)
   return (
-    <div className='post-ad'  >
+    <div className='post-ad' onClick={() => !isFullPost && navigate(`/posts/${_id}`)} >
       <div className='post-GHJ'>
         {/* Шапка поста */}
         <div className="post-header">
