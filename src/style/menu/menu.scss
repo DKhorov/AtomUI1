@@ -1,294 +1,96 @@
-// menu.scss
-/* Sidebar styles */
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
+.dtf-menu {
+  width: 300px;         
   height: 100vh;
-  width: 250px;
-  background-color: #24292e;
+  overflow-y: auto; // Изменено с scroll на auto
+  padding: 0 20px;      
+  box-sizing: border-box; 
+  scrollbar-width: thin; // Для Firefox
+  scrollbar-color: #282828 #000000; // Для Firefox
+}
 
-  border-right: 1px solid #30363d;
-  z-index: 100;
+/* Стилизация для WebKit */
+.dtf-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dtf-menu::-webkit-scrollbar-track {
+  background: #000000;
+  border-radius: 3px;
+}
+
+.dtf-menu::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 3px;
+}
+
+.dtf-menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dft-button{
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  overflow-y: hidden;
-  padding: 15px 0;
-
-  &.collapsed {
-    width: 70px;
-    align-items: center;
-    overflow-y: hidden;
-
-    .user-name,
-    .menu-text {
-      display: none;
-    }
-    overflow-y: hidden;
-
-    .sidebar-header {
-      justify-content: center;
-      padding: 0;
-    }
-
-    .user-info {
-      justify-content: center;
-    }
-  }
-
-  @media (max-width: 768px) {
-    transform: translateX(-100%);
-    
-    &.mobile-open {
-      transform: translateX(0);
-      overflow-y: hidden;
-
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-    }
-  }
+}
+.dft-menu-container{
+  margin-top: 20px;
 }
 
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 15px 15px;
-  border-bottom: 1px solid #30363d;
-  margin-bottom: 15px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 40px !important;
-  height: 40px !important;
-  transition: all 0.3s ease;
-}
-
-.user-name {
-  color: #f0f6fc;
-  font-size: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
-}
-
-.collapse-btn {
-  background: none;
-  border: none;
-  color: #c9d1d9;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: #161b22;
-    color: #f0f6fc;
-  }
-}
-
-.sidebar-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 10px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 15px;
-  border-radius: 6px;
-  color: #c9d1d9;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-
-  &:hover {
-    background-color: #161b22;
-    color: #f0f6fc;
-  }
-
-  .menu-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-    width: 24px;
-    text-align: center;
-  }
-
-  .menu-text {
-    font-size: 14px;
-    font-weight: 400;
-  }
-}
-
-/* Mobile menu button */
-.mobile-menu-button {
-  display: none;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 90;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  color: #f0f6fc;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-}
-
-/* Modal styles */
-.favorites-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(3px);
-}
-
-.modal-content {
-  width: 90%;
-  max-width: 1200px;
-  max-height: 90vh;
-  background-color: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 20px;
-  overflow-y: auto;
-  color: #c9d1d9;
-  outline: none;
-
-  h2 {
-    color: #f0f6fc;
-    margin-bottom: 20px;
+.dft-bth{
+    --height: 46px;
+    --offset: 10px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 22px;
-  }
+    min-width: 0;
+    height: var(--height);
+    padding: 0 var(--offset);
+    border-radius: 12px;
+    cursor: pointer;
+    color: rgb(202, 202, 202);
+    text-decoration: none;
 }
 
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  padding: 40px 0;
+.dft-bth:hover{
+  background-color: rgb(70, 70, 70);
 }
 
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+.qazwsx{
+  width: 25px;
+  height: 25px;
+  margin: 10px;
+  color: rgb(202, 202, 202);
+
+}
+.dft-theme{
+  margin-top: 20px;
+  margin-left: 20px;
+
 }
 
-.favorite-item {
-  position: relative;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 16px;
-  background-color: #161b22;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-}
-
-.post-content {
-  cursor: pointer;
-
-  h3 {
-    color: #f0f6fc;
-    margin: 10px 0;
-    font-size: 16px;
-  }
-}
-
-.post-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.post-stats {
-  display: flex;
-  justify-content: space-between;
-  color: #8b949e;
-  font-size: 13px;
-}
-
-.delete-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  color: #f85149 !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  width: 30px !important;
-  height: 30px !important;
-}
-
-.empty-favorites {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  color: #8b949e;
-  text-align: center;
-
-  .empty-icon {
-    font-size: 48px;
-    margin-bottom: 15px;
-    color: #8b949e;
-  }
-
-  p {
-    line-height: 1.5;
-  }
-}
+.ft-theme-title{
+  font-family: 'JetBrains Mono';
+  color: rgb(87, 87, 87);
 
 
-// Добавьте это в ваш menu.scss
-@media (max-width: 768px) {
-  .mobile-menu-button{
-    display: none;
-
-  }
-  .sidebar {
-    display: none;
-
-    
-    &.mobile-open {
-      display: block;
-      position: fixed;
-      z-index: 1000;
-      background: white;
-      height: 100vh;
-      width: 80%;
-      top: 0;
-      left: 0;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    }
-  }
   
 
 }
 
-@media (min-width: 769px) {
-  .mobile-menu-button {
-    display: none;
-  }
+.theme-pos{
+  display: flex;
+  margin-top: 15px;
+}
+.pos-title{
+  margin-left: 10px;
+  margin-top: 5px;
+}
+.tg-cont{
+  padding: 0 10px 0 10px;
+  background-color: rgb(63, 63, 63);
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+.tg-title{
+  color: white;
+  text-align: center;
 }

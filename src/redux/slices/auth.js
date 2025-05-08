@@ -14,22 +14,42 @@ export const fetchAuthMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get('/auth/me');
-      // Предполагаем, что данные о подписках приходят сразу с пользователем
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка авторизации');
     }
   }
 );
+
 export const fetchRegister = createAsyncThunk('auth/fetchRegister', async (params) => {
   const { data } = await axios.post('auth/register', params);
   return data;
 });
 
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async ({ currentPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post('/auth/change-password', {
+        currentPassword,
+        newPassword
+      });
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка при изменении пароля');
+    }
+  }
+);
+
 const initialState = {
   data: null,
   status: 'idle',
-  error: null
+  error: null,
+  passwordChangeStatus: 'idle',
+  passwordChangeError: null
 };
 
 const authSlice = createSlice({
@@ -40,6 +60,10 @@ const authSlice = createSlice({
       state.data = null;
       localStorage.removeItem('token');
     },
+    resetPasswordChangeStatus: (state) => {
+      state.passwordChangeStatus = 'idle';
+      state.passwordChangeError = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -77,6 +101,18 @@ const authSlice = createSlice({
       .addCase(fetchRegister.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.passwordChangeStatus = 'loading';
+        state.passwordChangeError = null;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.passwordChangeStatus = 'succeeded';
+        state.data = action.payload;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.passwordChangeStatus = 'failed';
+        state.passwordChangeError = action.payload || action.error.message;
       });
   },
 });
@@ -84,6 +120,8 @@ const authSlice = createSlice({
 export const selectIsAuth = (state) => Boolean(state.auth.data);
 export const selectAuthStatus = (state) => state.auth.status;
 export const selectAuthError = (state) => state.auth.error;
+export const selectPasswordChangeStatus = (state) => state.auth.passwordChangeStatus;
+export const selectPasswordChangeError = (state) => state.auth.passwordChangeError;
 
 export const authReducer = authSlice.reducer;
-export const { logout } = authSlice.actions;
+export const { logout, resetPasswordChangeStatus } = authSlice.actions;

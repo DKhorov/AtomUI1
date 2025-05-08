@@ -23,8 +23,10 @@
   color:white;
 }
 
+
+
 $space-dark: #0D1116;
-$space-gray: #0d1116;
+$space-gray: #212b37;
 $neon-blue: #18a3f9;
 $cyber-pink: #f91880;
 $border-cosmic: #3b424c;
@@ -43,7 +45,7 @@ $star-light: rgba(218, 243, 255, 0.95);
 
 .post-ad {
   width: 100%;
-  max-width: 100%;
+  max-width: 99%;
   margin: 15px auto;
   perspective: 1000px;
   cursor: pointer;
@@ -61,10 +63,22 @@ $star-light: rgba(218, 243, 255, 0.95);
     pointer-events: auto;
   }
 }
+@media (max-width: 768px) {
+  .post-ad{
+    width: 100%;
+    max-width: 100%;
+  }
+}
 
 .post-GHJ {
-  @include cosmic-border;
-  background: $space-dark;
+ background-color: #262d34;
+ border: solid #2f3741 1.5px;
+ border-radius:10px;
+ @media (max-width: 768px) {
+    margin: 0;
+
+}
+
   margin: 15px;
   padding: 24px;
   position: relative;
@@ -76,11 +90,6 @@ $star-light: rgba(218, 243, 255, 0.95);
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba($neon-blue, 0.08) 0%,
-      rgba($cyber-pink, 0.04) 100%
-    );
     z-index: 0;
   }
 }
@@ -97,6 +106,8 @@ $star-light: rgba(218, 243, 255, 0.95);
 
 .image-container {
   position: relative;
+  width: 100%;
+  max-height: 500px;
   margin: 24px 0;
   border-radius: 8px;
   overflow: hidden;
@@ -111,17 +122,16 @@ $star-light: rgba(218, 243, 255, 0.95);
 }
 
 .img-IKLS {
-  width: auto;
-  max-width: 50%;
-  height: auto;
-  max-height: 600px;
+  width: 100%;
+  height: auto; /* Автоматическая высота для сохранения пропорций */
   object-fit: contain;
   display: block;
   margin: 0 auto;
   position: relative;
   z-index: 1;
-  border-radius: 6px;
+  border-radius: 10px;
 }
+
 
 .post-content {
   position: relative;
@@ -137,43 +147,53 @@ $star-light: rgba(218, 243, 255, 0.95);
 .title-GHJ {
   font-family: 'SF Pro Text', sans-serif;
   font-weight: 600;
-  font-size: 2.1rem;
+  font-size: 1.9rem;
   color: $star-light;
-  margin: 24px 0;
+  margin-bottom: 5px;
+  margin-left: 6px;
   line-height: 1.25;
   letter-spacing: -0.03em;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   word-break: break-word; // Перенос длинных слов
 }
 
-.post-description {
+.post-description2 {
   font-family: 'SF Pro Text', sans-serif;
   font-weight: 400;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: rgba($star-light, 0.85);
-  margin: 24px 0;
+  font-size: 1.2rem;
+  color: white;
+  margin-left: 6px;
+  margin-top: 0;
   word-break: break-word; // Перенос длинных слов
   overflow-wrap: break-word; // Перенос длинных слов
 }
 
 .description-GHJ {
   @extend .post-description;
-  padding: 18px;
+  padding: 45px;
   @include glass-effect;
   border-radius: 8px;
+  
   
   pre, code {
     white-space: pre-wrap; // Перенос текста в code блоках
     word-break: break-all;
   }
 }
-
+@media (max-width: 768px) {
+  .post-description2{ font-size: 15px; margin-top: 10px ; margin-left: 0};
+}
+.verifiedBadge, .shopBadge {
+  margin-left: 8px;
+  font-size: 16px !important;
+  color: #9147ff !important; // Цвет акцента
+}
 .meta-info {
   display: flex;
   gap: 16px;
   align-items: center;
-  margin: 24px 0;
+  margin-bottom: 0;
+  margin-top: 20px;
   flex-wrap: wrap; // Перенос на новую строку при нехватке места
 }
 
@@ -195,13 +215,14 @@ $star-light: rgba(218, 243, 255, 0.95);
     transition: all 0.3s ease;
     text-decoration: none;
     white-space: nowrap;
+    
   }
 }
 
 .post-actions {
   display: flex;
   gap: 16px;
-  margin-top: 28px;
+  margin-top: 12px;
   position: relative;
   z-index: 2;
 
@@ -387,5 +408,59 @@ $star-light: rgba(218, 243, 255, 0.95);
         font-size: 0.85rem;
       }
     }
+  }
+}
+
+
+.mepost-main{
+  overflow-y: scroll;
+  height: 100vh;
+
+}
+
+.post-main {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4a96f3 #0D1116;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #0D1116;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #4a96f3;
+    border-radius: 3px;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .title-GHJ {
+    font-size: 1.4rem;
+    margin-bottom: 0; /* Уменьшен отступ после заголовка */
+  }
+
+  .post-description, .description-GHJ {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 8px; /* Уменьшен промежуток между текстом и заголовком */
+  }
+
+  .img-IKLS {
+    max-height: 280px; /* Сделано поменьше */
+    margin-top: -10px; /* Поднял ближе к заголовку */
+  }
+
+  .post-actions {
+    gap: 8px; /* Компактные кнопки */
+    padding: 10px;
+  }
+
+  .tags-GHJ a {
+    font-size: 0.85rem;
+    padding: 6px 12px;
   }
 }

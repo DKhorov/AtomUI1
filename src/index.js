@@ -8,6 +8,7 @@ import theme from './apps/sys-tool/theme';
 import AppRouter from './Router';
 import { NotificationProvider } from './apps/tools/ui-menu/pushbar/pushbar';
 import store from './redux/store';
+import { GlobalStyles } from '@mui/material';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

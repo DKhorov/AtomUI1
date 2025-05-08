@@ -1,29 +1,56 @@
 /* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
 
 .profile-container {
-  max-width: 1200px;
+  max-width: 800px;
+  height: 100vh;
   margin: 0 auto;
   margin-top: 20px;
   padding: 20px;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-y: auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
   box-sizing: border-box;
+  margin-bottom:20%;
+}
+.profile-container::-webkit-scrollbar {
+  width: 0px;
+}
+
+@media (max-width: 768px) {
+  .dsdf{display: flex; flex-direction: column;}
+
+}
+
+.profile-containeru::-webkit-scrollbar-track {
+  background: #000000;
+  border-radius: 3px;
+}
+
+.profile-container::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 3px;
+}
+
+.profile-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .profile-actions {
   display: flex;
-  justify-content: space-evenly;
-  margin-right: 40px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  
+  
+}
+@media (max-width: 768px) {
+  .profile-actions{margin-left: 0px; margin-bottom: 10px;
+  margin-top: 0px;}
+
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-}
+
 
 #root {
   min-height: 100%;
@@ -51,60 +78,65 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: -75px;
+  margin-top: -55px;
   padding: 0 20px;
   position: relative;
   z-index: 1;
   text-align: center;
 
   @media (min-width: 768px) {
-    margin-top: -100px;
-    padding-bottom: 60px;
+    margin-top: -70px;
+    justify-content: center;
   }
 }
 
 .profile-avatar-container {
   display: flex;
-  justify-content: center;
   width: 100%;
 
   .profile-avatar {
-    width: 150px;
-    height: 150px;
+    width: 110px;
+    height:110px;
     border-radius: 50%;
-    border: 5px solid white;
+    border: 1px solid white;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
     
-    @media (min-width: 768px) {
-      width: 180px;
-      height: 180px;
-    }
+
   }
 }
+@media (max-width: 768px) {
+  .profile-avatar-container{justify-content: center;}
+
+}
+
 
 .profile-text-info {
   width: 100%;
-  text-align: center;
   margin-top: 20px;
+  margin-bottom: 0;
 }
 
 .profile-name-container {
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .profile-name {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 35px;
+  font-weight: 200;
+  font-family: 'JetBrains Mono';
   margin: 0;
   color: #ffffff;
   text-align: center;
   
-  @media (min-width: 768px) {
-    font-size: 48px;
-  }
+
+}
+@media (max-width: 768px) {
+  .profile-text-info {display: flex;
+  justify-content: center;}
+
 }
 
 .verified-badge {
@@ -177,6 +209,11 @@ html, body {
   margin-top: 40px;
   padding-bottom: 40px;
 }
+@media (max-width: 768px) {
+  .profile-additional-info {margin-left: 0px;}
+
+}
+
 
 .posts-title {
   font-size: 24px;
@@ -240,7 +277,6 @@ html, body {
   .op{
     display: flex;
     justify-content: center;
-    margin-top: 30px;
   }
   
   .profile-avatar {
@@ -350,8 +386,9 @@ html, body {
 
 .banner-pro{
   width: 100%;
-  height: 80px;
+  height: 90px;
   display: flex;
+  padding-bottom: 10px;
   align-items: center;
   justify-content: space-between;
   border-radius:  20px 20px 0 0;
@@ -390,6 +427,7 @@ html, body {
 .banner-pro1{
   width: 100%;
   height: 80px;
+  padding-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -411,6 +449,14 @@ html, body {
   color: rgb(0, 140, 255);
   margin-left: 20px;
   margin-top: 4px;
+  cursor: default;
+}
+.pro-username:hover{
+  font-family: "JetBrains Mono";
+  color: rgb(55, 255, 0);
+  margin-left: 20px;
+  margin-top: 4px;
+  cursor: copy;
 }
 .pro-title2{
   font-family: "JetBrains Mono";
@@ -439,8 +485,8 @@ text-align: center; margin-top: 4px;
   background: transparent; /* Прозрачный фон */
 }
 
-.copy-icon:hover {
-  background: rgba(255, 255, 255, 0.1); /* Легкий эффект при наведении */
+.copy-button{
+  margin-right: 30px;
 }
 
 .copy-icon:active {
@@ -450,18 +496,25 @@ text-align: center; margin-top: 4px;
 
 
 .white-bth1{
-  background-color: white;
-  border: solid white 1px;
+  background-color: #1c212b;
+  border:  solid #1c212b 1px;
   font-weight: bold;
-  color: black;
+  color: rgb(0, 140, 255);
   border-radius: 50px;
   padding: 10px 20px 10px 20px;
-  margin-bottom: 30px;
+  margin-bottom: 0px;
   width: 100%;
-  margin-left: 20px;
+  margin-left: 0px;
   margin-top: 0;
+ 
+}
+
+@media (max-width: 768px) {
+  .white-bth1{margin-left: 0px; margin-bottom: 10px;
+  margin-top: 30px; font-size:20px;}
 
 }
+
 
 .gif-cont{
   background-color: #9d7a2ee0;
@@ -612,3 +665,16 @@ text-align: center; margin-top: 4px;
   .flexs {
     flex-direction: column;
   }}
+
+  body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0D1116;
+}
+html{
+    height: 100%;
+    overflow: hidden;
+}
+
