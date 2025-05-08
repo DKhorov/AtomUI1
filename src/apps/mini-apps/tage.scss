@@ -1,8 +1,10 @@
 .tags-page-container {
-    width: 70%;
+    width: 800px;
     margin: 0 auto;
     padding: 20px;
-    margin-top: 50px;
+    margin-top: 10px;
+    overflow-y: scroll;
+    height: 100vh;
   
     .tag-header {
       display: flex;
@@ -45,4 +47,23 @@
       gap: 20px;
       margin-top: 30px;
     }
+  }
+
+
+  .tags-page-container::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  .tags-page-container::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 3px;
+  }
+  
+  .tags-page-container::-webkit-scrollbar-thumb {
+    background: #282828;
+    border-radius: 3px;
+  }
+  
+  .tags-page-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }

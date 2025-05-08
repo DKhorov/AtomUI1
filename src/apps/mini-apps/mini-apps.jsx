@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, Navigate, useNavigate , useParams } from 'react-router-dom';
 import axios from '../../axios';
+import { selectIsAuth } from '../../redux/slices/auth';
 import { Post } from '../post/post';
 import {
   Tabs,
@@ -32,6 +34,7 @@ export const MiniApps = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const isAuth = useSelector(selectIsAuth);
 
   // Загрузка тегов по категориям
   useEffect(() => {
@@ -76,6 +79,10 @@ export const MiniApps = () => {
     navigate(`/tags/${tagName}`);
     setPage(1);
   };
+    if (!window.localStorage.getItem('token') && !isAuth) {
+      return <Navigate to="/login" />;
+    }
+  
 
   const filteredTags = () => {
     if (!tagsData) return [];

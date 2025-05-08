@@ -64,10 +64,11 @@ const colors = {
 const FeatureBanner = styled(Paper)(({ theme }) => ({
   background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`,
   borderRadius: '8px',
-  padding: theme.spacing(3),
-  margin: theme.spacing(3, 0),
+  padding: theme.spacing(2),
+  margin: theme.spacing(2, 0),
   display: 'flex',
-  alignItems: 'center',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
   color: 'white',
   transition: 'transform 0.2s',
   '&:hover': {
@@ -77,13 +78,24 @@ const FeatureBanner = styled(Paper)(({ theme }) => ({
 
 const CodeBlock = styled(Box)(({ theme }) => ({
   backgroundColor: colors.card,
-  padding: theme.spacing(2),
-  borderRadius: '8px',
+  padding: theme.spacing(1.5),
+  borderRadius: '6px',
   overflowX: 'auto',
   fontFamily: 'monospace',
-  margin: theme.spacing(2, 0),
-  borderLeft: `4px solid ${colors.accent}`
+  margin: theme.spacing(1.5, 0),
+  fontSize: '0.9rem',
+  borderLeft: `3px solid ${colors.accent}`
 }));
+
+const MobileSectionTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '1.5rem',
+  fontWeight: 600,
+  marginBottom: theme.spacing(2),
+  color: colors.primary,
+  paddingBottom: '4px',
+  borderBottom: `2px solid ${colors.card}`
+}));
+
 
 const FloatingBox = styled(Box)({
   animation: `${floatAnimation} 3s ease-in-out infinite`
@@ -148,7 +160,6 @@ function Dock() {
 
   // Упрощенное меню
   const menuSections = [
-    { id: 'about', text: 'О сервисе', icon: <RocketLaunchIcon /> },
     { id: 'features', text: 'Обновления', icon: <CodeIcon /> },
     { id: 'quick-start', text: 'Быстрый старт', icon: <RocketLaunchIcon /> },
     { id: 'API', text: 'Праивла', icon: <LinkIcon /> },
@@ -229,129 +240,7 @@ function Dock() {
 // Основное содержимое
 const renderContent = () => {
 switch (activeSection) {
-case 'about':
-return (
-<Box>
-<RunningText text="🚀 Добро пожаловать в документацию AtomGlide — платформы для разработчиков будущего!" />
 
-        <Fade in={welcomeVisible} timeout={1000} unmountOnExit>
-          <Box sx={{
-            bgcolor: colors.primary,
-            color: 'white',
-            p: 3,
-            mb: 3,
-            borderRadius: '8px',
-            textAlign: 'center'
-          }}>
-            <Typography variant="h5">Добро пожаловать в Dock!</Typography>
-            <Typography>Исследуйте возможности нашей платформы</Typography>
-          </Box>
-        </Fade>
-        
-        <Typography variant="h4" gutterBottom sx={{ 
-          color: colors.primary, 
-          pb: 2,
-          borderBottom: `1px solid ${colors.card}`
-        }}>
-          О платформе AtomGlide
-        </Typography>
-        
-        <Grid container spacing={3} alignItems="center">
-          <Grid item xs={12} md={6}>
-
-            <CodeBlock>
-            AtomGlide — платформа для IT-сообщества, где можно делиться кодом, проектами, общаться в реальном времени в чатах, и выкладывать мемы, поддерживая атмосферу творчества и сотрудничества.
-            </CodeBlock>
-            </Grid>
-            
-       </Grid>
-          
-
-        
-        <Grid container spacing={3} sx={{ mt: 1 }}>
-          <Grid item xs={12} md={6}>
-            <FeatureBanner>
-              <CodeIcon sx={{ fontSize: 40, mr: 2 }} />
-              <Box>
-                <Typography variant="h6">Работа с кодом</Typography>
-                <Typography variant="body2">
-                  • Публикация сниппетов с подсветкой<br />
-                  • Совместное редактирование<br />
-                  • 50+ языков программирования
-                </Typography>
-              </Box>
-            </FeatureBanner>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <FeatureBanner>
-              <GroupIcon sx={{ fontSize: 40, mr: 2 }} />
-              <Box>
-                <Typography variant="h6">Социальные функции</Typography>
-                <Typography variant="body2">
-                  • Приватные и групповые чаты<br />
-                  • Комментарии к коду<br />
-                  • Система рейтинга
-                </Typography>
-              </Box>
-            </FeatureBanner>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <FeatureBanner>
-              <AddAPhotoIcon sx={{ fontSize: 40, mr: 2 }} />
-              <Box>
-                <Typography variant="h6">Развлечения</Typography>
-                <Typography variant="body2">
-                  • IT-мемы и гифки<br />
-                  • Игровые боты в чатах<br />
-                  • Виртуальные комнаты
-                </Typography>
-              </Box>
-            </FeatureBanner>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <FeatureBanner>
-              <RocketLaunchIcon sx={{ fontSize: 40, mr: 2 }} />
-              <Box>
-                <Typography variant="h6">Технологии</Typography>
-                <Typography variant="body2">
-                  • Реактивный интерфейс<br />
-                  • API для интеграций<br />
-                  • Поддержка IDE
-                </Typography>
-              </Box>
-            </FeatureBanner>
-          </Grid>
-        </Grid>
-        <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ 
-              color: colors.primary,
-              mb: 2
-            }}>
-              AtomWiki
-            </Typography>
-            <CodeBlock>
-            AtomWiki – это раздел аналитики и продвижения сервиса, который включает анализ постов, оценку вовлеченности аудитории, разработку рекламных баннеров и изучение пользовательских предпочтений для более эффективного взаимодействия и роста платформы.
-            </CodeBlock>
-          </Box>
-
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ 
-              color: colors.primary,
-              mb: 2
-            }}>
-              Товарные знаки , Лицензия
-            </Typography>
-            <CodeBlock>
-            Продукты AtomGlide, AtomWiki, Honky принадлежат DK Studio, и их копирование, распространение или модификация без разрешения запрещены. Использование сервисов регулируется лицензией. Если вы хотите помочь развитию проекта, свяжитесь с его разработчиком в Telegram: @jpegweb.
-            </CodeBlock>
-          </Box>
-          
-          
-      </Box>
-    );
   
   case 'features':
     return (
@@ -449,6 +338,27 @@ return (
                   "Новый главный экран для авторизованных пользователей",
                   "Улучшена лента рекомендаций"
                 ]
+              
+              
+            },
+            {
+              icon: <CodeIcon color="primary" sx={{ fontSize: 30 }} />,
+              title: "Обновление 6.0",
+              
+                "items": [
+                  "Новый интерфейс AtomUI 3",
+                  "Теперь можно скопировать данные про пользователя просто нажав на инфу в профиле",
+                  "Теперь можно глянуть превью поста перед отправкой на ПК",
+                  "Описание постов при создании на телефоне",
+                  "Исправлено 90% багов",
+                  "Новый дизайн профиля",
+                  "Новая вкладка 'Моя лента'",
+                  "Теперь на главном экране в посте описание",
+                  "Исправлено разрешение фото в посте на телефоне и ПК",
+                  "Новая политика AtomGlide"
+                ]
+              
+              
               
               
             },

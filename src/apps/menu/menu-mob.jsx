@@ -17,7 +17,12 @@ import { keyframes, styled } from '@mui/system';
 import { UserInfo } from '../../account/UserInfo';
 import '../../style/mobile-menu/mm.scss';
 import { FaCode, FaWallet } from 'react-icons/fa';
-
+import { FaFireFlameCurved, FaPerson } from "react-icons/fa6";
+import { IoMdTime } from "react-icons/io";
+import { FiCheckSquare } from "react-icons/fi";
+import { FiCode } from "react-icons/fi";
+import { FiAward } from "react-icons/fi";
+import { FiBookmark } from "react-icons/fi";
 import { 
   BsHouseDoor, 
   BsChat,
@@ -110,8 +115,8 @@ export const Mobile = () => {
 
   return (
     <div className="mobile-menu">
-      <Link to="/"><BsHouseDoor className="menu-icon-z" /></Link>
-      <Link to="/wallet"><FaWallet className="menu-icon-z" /></Link>
+      <Link to="/"><IoMdTime className="menu-icon-z" /></Link>
+      <Link to="/popular"><FaFireFlameCurved className="menu-icon-z" /></Link>
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
       <BsFillHeartFill 
         className="menu-icon-z" 

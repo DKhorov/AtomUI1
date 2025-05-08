@@ -5,10 +5,13 @@ import axios from '../../axios';
 import { keyframes } from '@emotion/react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import { FaPerson } from "react-icons/fa6";
+
 import remarkGfm from 'remark-gfm';
 import {
   Box,
-  styled
+  styled,
+  Skeleton // Добавлен импорт Skeleton
 } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'prism-react-renderer';
 import { themes } from 'prism-react-renderer';
@@ -39,8 +42,9 @@ import {
   Share as ShareIcon,
   Report as ReportIcon,
   Code as CodeIcon,
+  
   Language as LanguageIcon,
-  Close as CloseIcon // Добавлено здесь
+  Close as CloseIcon
 } from '@mui/icons-material';
 
 import styles from '../../style/post/post.scss';
@@ -59,6 +63,101 @@ const languageIcons = {
   Kotlin: <CodeIcon fontSize="small" />,
   Dart: <CodeIcon fontSize="small" />,
   Other: <LanguageIcon fontSize="small" />
+};
+
+const PostSkeleton = () => {
+  const colors = {
+    background: '#0d1117',
+    card: '#161b22',
+    accent: '#58a6ff'
+  };
+
+  return (
+    <div className='post-ad'>
+      <div className='post-GHJ' style={{ background: colors.card }}>
+        <div className="post-header" style={{ padding: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Skeleton variant="circular" width={40} height={40} animation="wave" />
+            <div style={{ flex: 1 }}>
+              <Skeleton
+                variant="text"
+                width="40%"
+                height={20}
+                animation="wave"
+                sx={{ bgcolor: colors.background }}
+              />
+              <Skeleton
+                variant="text"
+                width="30%"
+                height={16}
+                animation="wave"
+                sx={{ bgcolor: colors.background }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 16px 16px' }}>
+          <Skeleton
+            variant="rectangular"
+            height={24}
+            width="80%"
+            animation="wave"
+            sx={{ mb: 2, bgcolor: colors.background, borderRadius: 1 }}
+          />
+          
+          <Skeleton
+            variant="rectangular"
+            height={16}
+            width="90%"
+            animation="wave"
+            sx={{ mb: 1, bgcolor: colors.background, borderRadius: 1 }}
+          />
+          
+          <Skeleton
+            variant="rectangular"
+            height={16}
+            width="70%"
+            animation="wave"
+            sx={{ mb: 3, bgcolor: colors.background, borderRadius: 1 }}
+          />
+
+          <Skeleton
+            variant="rectangular"
+            height={200}
+            animation="wave"
+            sx={{ mb: 2, bgcolor: colors.background, borderRadius: 2 }}
+          />
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {[1, 2, 3].map((item) => (
+              <Skeleton
+                key={item}
+                variant="rounded"
+                width={80}
+                height={24}
+                animation="wave"
+                sx={{ bgcolor: colors.background, borderRadius: 12 }}
+              />
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 24 }}>
+            {[1, 2, 3, 4].map((item) => (
+              <Skeleton
+                key={item}
+                variant="rounded"
+                width={60}
+                height={24}
+                animation="wave"
+                sx={{ bgcolor: colors.background, borderRadius: 12 }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export const Post = ({
@@ -268,20 +367,22 @@ export const Post = ({
   const handleImageOpen = () => setIsImageModalOpen(true);
   const handleImageClose = () => setIsImageModalOpen(false);
 
-
+console.log(description)
   return (
-    <div className='post-ad'>
+    <div className='post-ad'  >
       <div className='post-GHJ'>
         {/* Шапка поста */}
         <div className="post-header">
           <div onClick={(e) => { e.stopPropagation(); navigate(`/account/profile/${postAuthorId}`); }}>
-          <UserInfo 
-  {...user} 
-  additionalText={createdAt}
-  avatarUrl={processImageUrl(user?.avatarUrl)}
-  accountType={user.accountType} // Явно передаем тип аккаунта
+ 
+<UserInfo 
+{...user} 
+additionalText={createdAt}
+avatarUrl={processImageUrl(user?.avatarUrl)}
+accountType={user?.accountType} // Используйте опциональную цепочку
 />
           </div>
+          
 
           <div>
             <IconButton onClick={handleMenuClick} size="small">
@@ -301,6 +402,15 @@ export const Post = ({
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
+             {isAuthor && (
+                          <>
+            
+                            <MenuItem onClick={() => setDeleteDialogOpen(true)}>
+                              <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
+                              Удалить
+                            </MenuItem>
+                          </>
+                        )}
             <MenuItem onClick={handleShare}>
               <ListItemIcon><ShareIcon fontSize="small" /></ListItemIcon>
               Поделиться
@@ -308,13 +418,29 @@ export const Post = ({
             
       
             
+          
+            <MenuItem onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>
+              <ListItemIcon><FaPerson fontSize="big"  /></ListItemIcon>
+              Открыть пост
+            </MenuItem>
             <MenuItem onClick={handleReport}>
               <ListItemIcon><ReportIcon fontSize="small" /></ListItemIcon>
               Пожаловаться
             </MenuItem>
           </Menu>
         </div>
-
+        <h2 
+  className='title-GHJ' 
+  onClick={(e) => {
+    e.stopPropagation(); // Добавляем остановку всплытия
+    if (!isFullPost) {
+      navigate(`/posts/${_id}`);
+    }
+  }}
+>
+  {title}
+</h2>
+        <p className='post-description2' onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{description}</p>
         {/* Изображение */}
         {imageUrl && (
         <div 
@@ -334,9 +460,7 @@ export const Post = ({
           className="post-content"
          
         >
-          <h2 className='title-GHJ'  onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{title}</h2>
           
-          <p className='post-description'  onClick={() => !isFullPost && navigate(`/posts/${_id}`)}>{description}</p>
           
           {isFullPost && text && (
             <div className="description-GHJ">

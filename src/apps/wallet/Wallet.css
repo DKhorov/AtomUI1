@@ -1,21 +1,23 @@
 .wallet-container {
-    width: 80%;
+    width: 99%;
     margin: 0 auto;
     padding: 20px;
     height: auto;
     background-color: #0f141a;
     border: solid 1px #31373f;
     color: #ffffff;
-    margin-top: 15px;
     overflow-y: auto;
     border-radius: 12px;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
     .wallet-container {
-        margin-top: 50px;
         padding: 15px;
+        margin-top: 20px;
         border-radius: 8px;
     }
 }

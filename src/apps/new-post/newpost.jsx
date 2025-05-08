@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { fetchPosts } from '../../redux/slices/posts';
 import axios from '../../axios';
 import './newpost.scss';
+import Chip from '@mui/material/Chip';
 
 const LANGUAGES = [
   'JavaScript', 'TypeScript', 'Python', 'Java', 'C#',
@@ -22,6 +23,7 @@ const Newpost = ({ isOpen, onClose }) => {
   const [loadingDrafts, setLoadingDrafts] = useState(false);
   const [selectedDraft, setSelectedDraft] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ success: null, message: '' });
@@ -59,14 +61,12 @@ const Newpost = ({ isOpen, onClose }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Проверка типа файла
     const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
       setUploadStatus({ success: false, message: 'Допустимые форматы: JPEG, PNG, GIF' });
       return;
     }
 
-    // Проверка размера файла (10MB)
     const maxSizeMB = 10;
     if (file.size > maxSizeMB * 1024 * 1024) {
       setUploadStatus({ success: false, message: `Максимальный размер файла: ${maxSizeMB}MB` });
@@ -123,7 +123,6 @@ const Newpost = ({ isOpen, onClose }) => {
           
           const { data } = await axios.post('/upload', formData, {
             headers: {
-              'Content-Type': 'multipart/form-data',
               Authorization: `Bearer ${localStorage.getItem('token')}`
             }
           });
@@ -148,7 +147,7 @@ const Newpost = ({ isOpen, onClose }) => {
         text: codeContent,
         tags: tagsArray,
         language: selectedLanguage,
-        imageUrl: imageUrl || undefined
+        imageUrl: imageUrl || ''
       };
   
       await axios.post('/posts', postData, {
@@ -157,7 +156,6 @@ const Newpost = ({ isOpen, onClose }) => {
         }
       });
       
-      // Сброс формы
       setTitle('');
       setPostTags('');
       setDescription('');
@@ -176,7 +174,41 @@ const Newpost = ({ isOpen, onClose }) => {
     }
   };
 
+  const PostPreview = () => (
+    <div className="post-preview">
+      <h2>{title || 'Без названия'}</h2>
+      <p className="post-description">{description || 'Нет описания'}</p>
+      
+      {selectedFile && (
+        <div className="image-preview">
+          <img 
+            src={URL.createObjectURL(selectedFile)} 
+            alt="Предпросмотр изображения" 
+          />
+        </div>
+      )}
+      
+      {postTags && (
+        <div className="tags-preview">
+          {postTags.split(',').map((tag, i) => (
+            <Chip
+              key={i}
+              label={`#${tag.trim()}`}
+              size="small"
+              variant="outlined"
+            />
+          ))}
+        </div>
+      )}
+      
+      <div className="code-preview">
+        <pre>{editorRef.current?.getValue() || 'Нет кода'}</pre>
+      </div>
+    </div>
+  );
+
   if (!isOpen) return null;
+
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -206,6 +238,7 @@ const Newpost = ({ isOpen, onClose }) => {
               onChange={(e) => setDescription(e.target.value)}
               maxLength={200}
             />
+            
             <input
               className="modal-input"
               placeholder="Теги* (через запятую)"
@@ -296,26 +329,36 @@ const Newpost = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="modal-box2" ref={containerRef}>
-            <Editor
-              height="100%"
-              language={selectedLanguage.toLowerCase()}
-              theme="vs-dark"
-              onMount={handleEditorDidMount}
-              value={selectedDraft?.code || ''}
-              options={{
-                automaticLayout: true,
-                fontSize: 14,
-                scrollBeyondLastLine: false,
-                wordWrap: 'on',
-                minimap: { enabled: false }
-              }}
-              loading={<div style={{ color: '#fff' }}>Загрузка редактора...</div>}
-            />
-          </div>
+<div className="modal-box2" ref={containerRef}>
+  {showPreview ? (
+    <PostPreview />
+  ) : (
+    <Editor
+      height="100%"
+      language={selectedLanguage.toLowerCase()}
+      theme="vs-dark"
+      onMount={handleEditorDidMount}
+      value={selectedDraft?.code || ''}
+      options={{
+        automaticLayout: true,
+        fontSize: 14,
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        minimap: { enabled: false }
+      }}
+      loading={<div style={{ color: '#fff' }}>Загрузка редактора...</div>}
+    />
+  )}
+</div>
         </div>
 
         <div className="action-buttons">
+        <button 
+  className="preview-btn" 
+  onClick={() => setShowPreview(!showPreview)}
+>
+  {showPreview ? 'Редактировать' : 'Предпросмотр'}
+</button>
           <button className="cancel-btn" onClick={onClose}>
             Отменить
           </button>

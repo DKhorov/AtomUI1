@@ -9,6 +9,7 @@ const Newpostm = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState('');
   const [postTags, setPostTags] = useState('');
   const [postText, setPostText] = useState('');
+  const [description, setDescription] = useState(''); // Добавлено
   const [isLoading, setLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [openModal, setOpenModal] = useState(false);
@@ -57,6 +58,7 @@ const Newpostm = ({ isOpen, onClose }) => {
     setTitle('');
     setPostTags('');
     setPostText('');
+    setDescription(''); // Добавлено
     setSelectedFile(null);
     setUploadStatus({ success: null, message: '' });
   };
@@ -132,7 +134,7 @@ const Newpostm = ({ isOpen, onClose }) => {
 
       await axios.post('/posts', {
         title: title.trim(),
-        description: 'Made in Phone',
+        description: description.trim(), // Исправлено
         text: postText.trim(),
         tags: tagsArray,
         language: selectedLanguage,
@@ -201,6 +203,13 @@ const Newpostm = ({ isOpen, onClose }) => {
           placeholder="Заголовок*" 
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          className="m-p-input" // Исправлено с modal-input на m-p-input для единообразия
+          placeholder="Описание* (максимум 200 символов)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          maxLength={200}
         />
         
         <input 

@@ -484,3 +484,61 @@
   gap: 1rem;
   justify-content: flex-end;
 }
+
+// В newpost.scss добавьте:
+.post-preview {
+  padding: 20px;
+  color: #fff;
+  height: 100%;
+  overflow-y: auto;
+  
+  h2 {
+    margin-top: 0;
+    color: #58a6ff;
+  }
+  
+  .post-description {
+    color: #c9d1d9;
+    margin-bottom: 20px;
+  }
+  
+  .image-preview {
+    margin: 20px 0;
+    
+    img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 6px;
+    }
+  }
+  
+  .language-tag,
+  .tags-preview {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .code-preview {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    white-space: pre-wrap;
+    
+    pre {
+      margin: 0;
+      overflow-x: auto;
+    }
+  }
+}
+
+.preview-btn {
+  background: #3a3a3a !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+  
+  &:hover {
+    background: #4a4a4a !important;
+  }
+}

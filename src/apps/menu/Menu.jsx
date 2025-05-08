@@ -1,43 +1,105 @@
-import React, { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchPosts, fetchTags } from '../../redux/slices/posts';
-import Avatar from '@mui/material/Avatar';
-import { fetchUser, selectUser } from '../../redux/slices/getme';
-import image from '../../img/user-logo6.jpg';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../../style/menu/menu.scss';
+import { FaFireFlameCurved, FaPerson } from "react-icons/fa6";
+import { IoMdTime } from "react-icons/io";
+import { FiCheckSquare } from "react-icons/fi";
+import { FiCode } from "react-icons/fi";
+import { FiAward } from "react-icons/fi";
+import { FiBookmark } from "react-icons/fi";
+import { Navigate } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import axios from '../../axios';
+import { CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import { selectIsAuth } from '../../redux/slices/auth';
+import { fetchUser, selectUser } from '../../redux/slices/getme';
+import { useSelector, useDispatch } from 'react-redux';
+import { Post } from '../post/post';
+import { keyframes, styled } from '@mui/system';
+import { UserInfo } from '../../account/UserInfo';
 import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import axios from '../../axios';
-import CircularProgress from '@mui/material/CircularProgress';
-import { UserInfo } from '../../account/UserInfo';
-import { BsHouseDoor, BsFillHeartFill, BsConeStriped } from 'react-icons/bs';
-import { FaCode, FaWallet } from 'react-icons/fa';
-import { BsFillTagsFill, BsFillPersonFill, BsChatFill } from 'react-icons/bs';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { styled } from '@mui/system';
+import { BsFillRssFill } from "react-icons/bs";
+import { BsChatFill } from "react-icons/bs";
+import { BsFillCupHotFill } from "react-icons/bs";
+import { BsFillTagsFill } from "react-icons/bs";
+import { BsFillPersonFill } from "react-icons/bs";
+import { FaStore } from "react-icons/fa";
+import { BsBoxFill } from "react-icons/bs";
+import { FaCode } from "react-icons/fa";
+import { FaWallet } from "react-icons/fa";
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const slideIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const StyledModal = styled(Modal)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backdropFilter: 'blur(3px)',
+  animation: `${fadeIn} 0.3s ease-out forwards`,
+});
+
+const AnimatedPost = styled('div')(({ delay }) => ({
+  animation: `${slideIn} 0.3s ease-out ${delay * 0.1}s forwards`,
+  opacity: 0,
+  position: 'relative',
+  border: '1px solid #30363d',
+  borderRadius: '6px',
+  padding: '16px',
+  backgroundColor: '#161b22',
+  transition: 'transform 0.2s',
+  '&:hover': {
+    transform: 'translateY(-5px)'
+  }
+}));
 
 const Menu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
-  const isAuth = useSelector(selectIsAuth);
+  const location = useLocation();
+  const [popularTags, setPopularTags] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [openFavoritesModal, setOpenFavoritesModal] = useState(false);
   const [favoritePosts, setFavoritePosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [collapsed, setCollapsed] = useState(true); // Изменено на true для скрытия по умолчанию
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const user = useSelector(selectUser);
+  const isAuth = useSelector(selectIsAuth);
 
   useEffect(() => {
-    dispatch(fetchUser());
-    dispatch(fetchPosts());
-    dispatch(fetchTags());
-  }, [dispatch]);
+    const fetchPopularTags = async () => {
+      try {
+        const { data } = await axios.get('/posts/tags/all');
+        const sortedTags = data.sort((a, b) => b.count - a.count).slice(0, 3);
+        setPopularTags(sortedTags);
+      } catch (err) {
+        console.error('Ошибка при загрузке популярных тегов:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPopularTags();
+  }, []);
+
+  useLayoutEffect(() => {
+    const checkWidth = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
 
   const fetchFavorites = async () => {
     try {
@@ -83,141 +145,213 @@ const Menu = () => {
     }
   };
 
-  const toggleCollapse = () => {
-    setCollapsed(!collapsed);
+  const handleThemeClick = (themeName) => {
+    navigate(`/tags/${themeName.toLowerCase()}`);
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  const handleTagClick = (tagName) => {
+    navigate(`/tags/${tagName}`);
   };
 
-  if (!user) {
-    return <div className='de'>Загрузка... Если долгая загрузка войди в аккаунт или прочти доку</div>;
-  }
-  if (!window.localStorage.getItem('token') && !isAuth) {
-    return <Navigate to="/login" />;
-  }
+  if (isMobile) return null;
+
+  const isActive = (path) => {
+    return location.pathname === path ? 'active' : '';
+  };
+
+  const themes = [
+    { name: 'Python', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQpDU7-J_NbGKkHAlMRWgdFRqoj5vK3DehTQ&s' },
+    { name: 'HTML', image: 'https://www.itss.paris/sites/itss-dev/files/styles/scaling_cropping_1200x800/public/2017-12/HTML5_0_0.jpg?itok=bnzL8xFI' },
+    { name: 'React', image: 'https://kasterra.github.io/images/thumbnails/React.png' },
+    { name: 'JavaScript', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuHnJDLOcdm_0b6N6kNj-1OvO9KhKYgqIy0w&s' },
+    { name: 'News', image: 'https://st2.depositphotos.com/6789684/12262/v/450/depositphotos_122620866-stock-illustration-illustration-of-flat-icon.jpg' },
+    { name: 'Atom Практикум', image: 'https://cdn-icons-png.flaticon.com/512/4366/4366867.png' }
+  ];
 
   return (
-    <>
-      <div className="mobile-menu-button" onClick={toggleMobileMenu}>
-        <MenuIcon fontSize="large" />
-      </div>
-
-      <div className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-        <div className="sidebar-header">
-          <button className="collapse-btn" onClick={toggleCollapse}>
-            {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}
-          </button>
+    <div className="dtf-menu">
+      <div className="dft-menu-container">
+        <div className="dft-button">
+          <Link to="/" className={`dft-bth ${isActive('/')}`}>
+            <IoMdTime className='qazwsx'></IoMdTime>
+            Свежее
+          </Link>
+          <Link to="/popular" className={`dft-bth ${isActive('/popular')}`}>
+            <FaFireFlameCurved className='qazwsx'></FaFireFlameCurved>
+            Популярное
+          </Link>
+          <Link to="/mypost" className={`dft-bth ${isActive('/mypost')}`}>
+            <FiCheckSquare className='qazwsx'></FiCheckSquare>
+            Моя лента
+          </Link>
+          <Link to="/code" className={`dft-bth ${isActive('/account/profile')}`}>
+            <FiCode className='qazwsx'></FiCode>
+            Код
+          </Link>
+          <Link to="/rev" className={`dft-bth ${isActive('/account/profile')}`}>
+            <FiAward className='qazwsx'></FiAward>
+            Темы
+          </Link>
+          <Link onClick={handleOpenFavorites} className={`dft-bth ${isActive('/account/profile')}`}>
+            <FiBookmark className='qazwsx'></FiBookmark>
+            Избранное
+          </Link>
         </div>
-        <nav className="sidebar-menu">
-          <Link to="/" className="menu-item" onClick={() => setCollapsed(true)}>
-            <BsHouseDoor className="menu-icon" />
-            {!collapsed && <span className="menu-text">Главная</span>}
-          </Link>
-          
-          <Link to={`/code`} className="menu-item" onClick={() => setCollapsed(true)}>
-            <FaCode className="menu-icon" />
-            {!collapsed && <span className="menu-text">Код</span>}
-          </Link>
-          
-          <Link to="/mini-apps" className="menu-item" onClick={() => setCollapsed(true)}>
-            <BsFillTagsFill className="menu-icon" />
-            {!collapsed && <span className="menu-text">Категории</span>}
-          </Link>
-          
-          <Link onClick={(e) => {
-            handleOpenFavorites(e);
-            setCollapsed(true);
-          }} className="menu-item">
-            <BsFillHeartFill className="menu-icon" />
-            {!collapsed && <span className="menu-text">Избранное</span>}
-          </Link>
-          
-          
-          <Link to={`/account/profile/${user._id}`} className="menu-item" onClick={() => setCollapsed(true)}>
-            <BsFillPersonFill className="menu-icon" />
-            {!collapsed && <span className="menu-text">Профиль</span>}
-          </Link>
-          
-          <Link to={`/wallet`} className="menu-item" onClick={() => setCollapsed(true)}>
-            <FaWallet className="menu-icon" />
-            {!collapsed && <span className="menu-text">Wallet</span>}
-          </Link>
-          
-          <Link to={'/dock'} className="menu-item" onClick={() => setCollapsed(true)}>
-            <BsConeStriped className="menu-icon" />
-            {!collapsed && <span className="menu-text">Дока</span>}
-          </Link>
-        </nav>
-
-        <Modal
-          open={openFavoritesModal}
-          onClose={handleCloseFavorites}
-          aria-labelledby="favorites-modal-title"
-          className="favorites-modal"
-        >
-          <Box className="modal-content">
-            <h2 id="favorites-modal-title">
-              <BookmarkIcon fontSize="large" />
-              Мои сохраненные посты
-            </h2>
-            
-            {loading ? (
-              <div className="loading-spinner">
-                <CircularProgress />
+        <div className="dft-theme">
+          <h5 className='ft-theme-title'>Темы</h5>
+          {themes.map((theme, index) => (
+            <div 
+              className="theme-pos" 
+              key={index}
+              onClick={() => handleThemeClick(theme.name)}
+              style={{ cursor: 'pointer' }}
+            >
+              <Avatar 
+                alt={theme.name} 
+                src={theme.image}
+                sx={{ width: 32, height:32 }}
+              />
+              <h4 className='pos-title'>{theme.name}</h4>
+            </div>
+          ))}
+        </div>
+        <div className="dft-theme">
+          <h5 className='ft-theme-title'>Популярные теги</h5>
+          {loading ? (
+            <Box display="flex" justifyContent="center" my={2}>
+              <CircularProgress size={20} />
+            </Box>
+          ) : (
+            popularTags.map((tag, index) => (
+              <div 
+                className="tg-cont" 
+                key={index}
+                onClick={() => handleTagClick(tag.name)}
+                style={{ cursor: 'pointer' }}
+              >
+                <h4 className="tg-title">#{tag.name} ({tag.count})</h4>
               </div>
-            ) : favoritePosts.length > 0 ? (
-              <div className="favorites-grid">
-                {favoritePosts.map((post) => (
-                  <div key={post._id} className="favorite-item">
-                    <div onClick={() => {
-                      navigate(`/posts/${post._id}`);
-                      setCollapsed(true);
-                    }} className="post-content">
-                      <UserInfo 
-                        {...post.user} 
-                        additionalText={new Date(post.createdAt).toLocaleDateString()}
-                        avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
-                      />
-                      
-                      <h3>{post.title}</h3>
-                      
-                      {post.imageUrl && (
-                        <img 
-                          src={`https://atomglidedev.ru${post.imageUrl}`} 
-                          alt={post.title}
-                          className="post-image"
-                        />
-                      )}
-                      
-                      <div className="post-stats">
-                        <span>{post.viewsCount} просмотров</span>
-                      </div>
-                    </div>
-                    
-                    <IconButton
-                      onClick={() => removeFromFavorites(post._id)}
-                      className="delete-btn"
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-favorites">
-                <BookmarkIcon className="empty-icon" />
-                <p>
-                  У вас пока нет сохраненных постов.<br />
-                  Нажмите на значок закладки в постах, чтобы сохранить понравившиеся.
-                </p>
-              </div>
-            )}
-          </Box>
-        </Modal>
+            ))
+          )}
+        </div>
       </div>
-    </>
+      <StyledModal
+        open={openFavoritesModal}
+        onClose={handleCloseFavorites}
+        aria-labelledby="favorites-modal-title"
+      >
+        <Box sx={{
+          width: '90%',
+          maxWidth: '1200px',
+          maxHeight: '90vh',
+          bgcolor: '#0d1117',
+          border: '1px solid #30363d',
+          borderRadius: '6px',
+          boxShadow: 24,
+          p: 4,
+          overflowY: 'auto',
+          color: '#c9d1d9',
+          outline: 'none'
+        }}>
+          <h2 id="favorites-modal-title" style={{ 
+            color: '#f0f6fc', 
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <BookmarkIcon fontSize="large" />
+            Мои сохраненные посты
+          </h2>
+          
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : favoritePosts.length > 0 ? (
+            <div style={{ 
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '20px'
+            }}>
+              {favoritePosts.map((post) => (
+                <div 
+                  key={post._id} 
+                  style={{
+                    position: 'relative',
+                    border: '1px solid #30363d',
+                    borderRadius: '6px',
+                    padding: '16px',
+                    backgroundColor: '#161b22',
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-5px)'
+                    }
+                  }}
+                >
+                  <div onClick={() => navigate(`/posts/${post._id}`)} style={{ cursor: 'pointer' }}>
+                    <UserInfo 
+                      {...post.user} 
+                      additionalText={new Date(post.createdAt).toLocaleDateString()}
+                      avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
+                    />
+                    
+                    <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
+                    
+                    {post.imageUrl && (
+                      <img 
+                        src={`https://atomglidedev.ru${post.imageUrl}`} 
+                        alt={post.title}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover',
+                          borderRadius: '4px',
+                          marginBottom: '10px'
+                        }}
+                      />
+                    )}
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8b949e' }}>
+                      <span>{post.viewsCount} просмотров</span>
+                    </div>
+                  </div>
+                  
+                  <IconButton
+                    onClick={() => removeFromFavorites(post._id)}
+                    sx={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      color: '#f85149',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              height: '200px',
+              color: '#8b949e',
+              animation: `${fadeIn} 0.3s ease-out`
+            }}>
+              <BookmarkIcon sx={{ fontSize: '48px', mb: 2 }} />
+              <p style={{ textAlign: 'center' }}>
+                У вас пока нет сохраненных постов.<br />
+                Нажмите на значок закладки в постах, чтобы сохранить понравившиеся.
+              </p>
+            </Box>
+          )}
+        </Box>
+      </StyledModal>
+    </div>
   );
 };
 
