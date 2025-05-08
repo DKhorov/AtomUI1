@@ -30,7 +30,7 @@ const Header = () => {
         padding: '20px'
       }}>
         <img 
-          src="https://cdn-icons-png.flaticon.com/512/4260/4260852.png" 
+          src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/9bb1d693658133.5e98ba7eb53fc.gif" 
           alt="Maintenance" 
           style={{ width: '150px', marginBottom: '30px' }}
         />
