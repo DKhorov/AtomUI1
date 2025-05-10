@@ -3,7 +3,10 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Header from './apps/header/header';
 import Menu from './apps/menu/Menu';
+import MenuMusic from './apps/menu/Menu-music';
+import Music from './apps/main/music';
 import Work from './apps/main/work';
+import PopularMusic from './apps/main/PopularMusic';
 import QAZ from './apps/main/panel';
 import Rev from './apps/main/rev';
 import Time from './apps/main/time';
@@ -24,7 +27,8 @@ import {TagsPage} from './apps/mini-apps/TagsPage';
 import SurveyForm from './apps/mini-apps/application/form';
 import FileEditor from './apps/mini-apps/application/code';
 import MePost from './apps/main/mypost';
-
+import ArtistList from './apps/main/ArtistList';
+import ArtistPage from './apps/main/ArtistPage';
 const PrivateRoute = ({ children }) => {
   const isAuth = useSelector(state => state.auth.isAuth);
   const token = localStorage.getItem('token');
@@ -132,6 +136,29 @@ const AppRouter = () => {
                         <QAZ />
                       </div>
                     } />
+                    <Route path="/music" element={
+                      <div className='main-container'>
+                        <MenuMusic />
+                        <Music />
+                      </div>
+                    } />
+                    <Route path="/popularmusic" element={
+                        <div className='main-container'>
+                        <MenuMusic />
+                        <PopularMusic />
+                      </div>} />
+                      <Route path="/artists" element={
+                       <div className='main-container'>
+                       <MenuMusic />
+                       <ArtistList />
+                     </div> 
+                    } />
+                      <Route path="/artist/:artistName" element={
+                         <div className='main-container'>
+                         <MenuMusic />
+                         <ArtistPage />
+                       </div> 
+                        } />
                     <Route path="/edit-profile/:id" element={<ProfileEdit />} />
                     <Route path="/tags/:tag" element={<TagsPage />} />
                   </Routes>
