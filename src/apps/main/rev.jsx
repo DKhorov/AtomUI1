@@ -91,6 +91,14 @@ const Rev = () => {
 
   return (
     <div className="mepost-main">
+      <div className='ad-music'>
+      <h1 className='ad-music-title'>Музыка уже в AtomGlide !</h1>
+      <h4 className="ad-music-subtitle">
+          AtomGlide Music — совершенно бесплатная платформа без подписок и рекламы. 
+          Загружай любую музыку — здесь нет проверки на авторские права и различных ограничений. 
+          Слушай музыку в наилучшем качестве с поддержкой Dolby Atmos.
+        </h4>
+      </div>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs 
           value={activeTab} 

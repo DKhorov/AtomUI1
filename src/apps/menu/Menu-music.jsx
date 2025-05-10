@@ -32,6 +32,11 @@ import { BsBoxFill } from "react-icons/bs";
 import { FaCode } from "react-icons/fa";
 import { FaWallet } from "react-icons/fa";
 import { IoMusicalNotesSharp } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa6";
+import { RiPlayListFill } from "react-icons/ri";
+import { TbMusicStar } from "react-icons/tb";
+import { SiDolby } from "react-icons/si";
+import { IoMdExit } from "react-icons/io";
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -65,7 +70,7 @@ const AnimatedPost = styled('div')(({ delay }) => ({
   }
 }));
 
-const Menu = () => {
+const MenuMusic = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -173,73 +178,24 @@ const Menu = () => {
     <div className="dtf-menu">
       <div className="dft-menu-container">
         <div className="dft-button">
-          <Link to="/" className={`dft-bth ${isActive('/')}`}>
-            <IoMdTime className='qazwsx'></IoMdTime>
-            Свежее
-          </Link>
-      
-          <Link to="/popular" className={`dft-bth ${isActive('/popular')}`}>
-            <FaFireFlameCurved className='qazwsx'></FaFireFlameCurved>
-            Популярное
-          </Link>
-          <Link to="/mypost" className={`dft-bth ${isActive('/mypost')}`}>
-            <FiCheckSquare className='qazwsx'></FiCheckSquare>
-            Моя лента
-          </Link>
-          <Link to="/music" className={`dft-bth ${isActive('/')}`}>
+          <Link to="/music" className={`dft-bth ${isActive('/music')}`}>
             <IoMusicalNotesSharp className='qazwsx'></IoMusicalNotesSharp>
-            Музыка
+            Главная
           </Link>
-          <Link to="/code" className={`dft-bth ${isActive('/account/profile')}`}>
-            <FiCode className='qazwsx'></FiCode>
-            Код
+          <Link to="/popularmusic" className={`dft-bth ${isActive('/popular')}`}>
+            <FaFireFlameCurved className='qazwsx'></FaFireFlameCurved>
+            Топ чартов
           </Link>
-          <Link to="/rev" className={`dft-bth ${isActive('/account/profile')}`}>
-            <FiAward className='qazwsx'></FiAward>
-            Темы
+          <Link to="/artists" className={`dft-bth ${isActive('/mypost')}`}>
+            <FaUsers className='qazwsx'></FaUsers>
+            Исполнители
           </Link>
-          <Link onClick={handleOpenFavorites} className={`dft-bth ${isActive('/account/profile')}`}>
-            <FiBookmark className='qazwsx'></FiBookmark>
-            Избранное
+          <Link to='/' className={`dft-bth ${isActive('/')}`}>
+            <IoMdExit className='qazwsx'></IoMdExit>
+            Выйти на главную
           </Link>
         </div>
-        <div className="dft-theme">
-          <h5 className='ft-theme-title'>Темы</h5>
-          {themes.map((theme, index) => (
-            <div 
-              className="theme-pos" 
-              key={index}
-              onClick={() => handleThemeClick(theme.name)}
-              style={{ cursor: 'pointer' }}
-            >
-              <Avatar 
-                alt={theme.name} 
-                src={theme.image}
-                sx={{ width: 32, height:32 }}
-              />
-              <h4 className='pos-title'>{theme.name}</h4>
-            </div>
-          ))}
-        </div>
-        <div className="dft-theme">
-          <h5 className='ft-theme-title'>Популярные теги</h5>
-          {loading ? (
-            <Box display="flex" justifyContent="center" my={2}>
-              <CircularProgress size={20} />
-            </Box>
-          ) : (
-            popularTags.map((tag, index) => (
-              <div 
-                className="tg-cont" 
-                key={index}
-                onClick={() => handleTagClick(tag.name)}
-                style={{ cursor: 'pointer' }}
-              >
-                <h4 className="tg-title">#{tag.name} ({tag.count})</h4>
-              </div>
-            ))
-          )}
-        </div>
+
       </div>
       <StyledModal
         open={openFavoritesModal}
@@ -361,4 +317,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default MenuMusic;

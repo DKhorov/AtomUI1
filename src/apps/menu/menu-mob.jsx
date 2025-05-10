@@ -22,6 +22,8 @@ import { IoMdTime } from "react-icons/io";
 import { FiCheckSquare } from "react-icons/fi";
 import { FiCode } from "react-icons/fi";
 import { FiAward } from "react-icons/fi";
+import { IoMusicalNotesSharp } from "react-icons/io5";
+
 import { FiBookmark } from "react-icons/fi";
 import { 
   BsHouseDoor, 
@@ -118,6 +120,8 @@ export const Mobile = () => {
       <Link to="/"><IoMdTime className="menu-icon-z" /></Link>
       <Link to="/popular"><FaFireFlameCurved className="menu-icon-z" /></Link>
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
+      <Link to="/music"><IoMusicalNotesSharp className="menu-icon-z" /></Link>
+
       <BsFillHeartFill 
         className="menu-icon-z" 
         onClick={handleOpenFavorites} 
