@@ -255,7 +255,7 @@ const Profile = () => {
   const hasSocialMedia = Object.values(socialMedia).some(val => val);
 
   return (
-    <div className="profile-container" style={{ backgroundColor: themeColor }}>
+    <div className="profile-container" >
       <div className="profile-banner">
         {coverUrl ? (
           <img src={coverUrl} className="banner-image" alt="Profile banner" />
@@ -298,7 +298,7 @@ const Profile = () => {
         
         <div className="profile-actions">
           <div className='op'>
-          {isCurrentUser ? (<div className='dsdf'>
+          {isCurrentUser ? (<div className='jlljl'>
             <button
               variant="outlined"
               startIcon={<EditIcon />}
@@ -307,22 +307,6 @@ const Profile = () => {
             >
               Редактировать
             </button>
-            <button
-            variant="outlined"
-           
-            onClick={() => navigate(`/wallet`)}
-            className="white-bth1"
-          >
-            Wallet
-          </button>
-          <button
-            variant="outlined"
-           
-            onClick={() => navigate(`/dock`)}
-            className="white-bth1"
-          >
-            Dock
-          </button>
           </div>
           ) : (
             <button
@@ -495,7 +479,7 @@ const Profile = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="profile-additional-info">
+                      <div className="profile-additional-info2">
                         <h3>AtomGlide Account</h3>
                         <div className="info-grid">
                           <div className="info-item">
@@ -503,16 +487,7 @@ const Profile = () => {
                           </div>
                           {isCurrentUser ? (
                             <>
-                              <Tooltip title="Редактировать профиль">
-                                <Button
-                                  variant="outlined"
-                                  startIcon={<EditIcon />}
-                                  onClick={() => navigate(`/edit-profile/${state.user._id}`)}
-                                  className="action-btn"
-                                >
-                                  Редактировать
-                                </Button>
-                              </Tooltip>
+                             
                               <Tooltip title="Выйти из аккаунта">
                                 <Button
                                   variant="outlined"

@@ -29,7 +29,6 @@ import FileEditor from './apps/mini-apps/application/code';
 import MePost from './apps/main/mypost';
 import ArtistList from './apps/main/ArtistList';
 import ArtistPage from './apps/main/ArtistPage';
-
 const PrivateRoute = ({ children }) => {
   const isAuth = useSelector(state => state.auth.isAuth);
   const token = localStorage.getItem('token');
@@ -63,8 +62,14 @@ const AppRouter = () => {
     return () => window.removeEventListener('resize', checkIfMobile);
   }, [dispatch]);
 
-  // УДАЛИЛИ проблемный эффект, который блокировал скролл
-  // Вместо этого каждый компонент должен управлять своим скроллом самостоятельно
+  useEffect(() => {
+    document.body.style.overflow = ['/', '/mypost', '/popular', '/wallet', '/account/profile/:id?', '/posts/:id', '/tags/:tag', '/rev']
+      .includes(location.pathname) ? 'hidden' : 'visible';
+    
+    return () => {
+      document.body.style.overflow = 'visible';
+    };
+  }, [location.pathname]);
 
   return (
     <div className="app-container">
@@ -114,7 +119,6 @@ const AppRouter = () => {
                       <div className='main-container'>
                         <Menu />
                         <FullPost />
-                        <QAZ />
                       </div>
                     } />
                     <Route path="/account/profile/:id?" element={
@@ -142,24 +146,19 @@ const AppRouter = () => {
                         <MenuMusic />
                         <PopularMusic />
                       </div>} />
-                    <Route path="/artists" element={
+                      <Route path="/artists" element={
                        <div className='main-container'>
                        <MenuMusic />
                        <ArtistList />
                      </div> 
                     } />
-                    <Route path="/artist/:artistName" element={
+                      <Route path="/artist/:artistName" element={
                          <div className='main-container'>
                          <MenuMusic />
                          <ArtistPage />
                        </div> 
-                    } />
-                    {/* Добавляем ScrollFix только для страницы редактирования профиля */}
-                    <Route path="/edit-profile/:id" element={
-                      <ScrollFix>
-                        <ProfileEdit />
-                      </ScrollFix>
-                    } />
+                        } />
+                    <Route path="/edit-profile/:id" element={<ProfileEdit />} />
                     <Route path="/tags/:tag" element={<TagsPage />} />
                   </Routes>
                 </div>
@@ -170,21 +169,6 @@ const AppRouter = () => {
       </SnackbarProvider>
     </div>
   );
-};
-
-// Добавляем компонент ScrollFix
-const ScrollFix = ({ children }) => {
-  useEffect(() => {
-    // Принудительно разрешаем скролл при монтировании
-    document.documentElement.style.overflow = 'auto';
-    document.body.style.overflow = 'auto';
-
-    return () => {
-      // Очистка не требуется, так как мы хотим сохранить скролл
-    };
-  }, []);
-
-  return children;
 };
 
 export default AppRouter;
