@@ -39,6 +39,9 @@ const ProfileEdit = () => {
   const coverInputRef = useRef(null);
 
   useEffect(() => {
+    // Разрешаем скролл при монтировании компонента
+    document.body.style.overflow = 'auto';
+    
     if (currentUser?._id !== id) {
       navigate('/');
       return;
@@ -63,6 +66,11 @@ const ProfileEdit = () => {
     };
 
     fetchUserData();
+
+    // Восстанавливаем исходное состояние overflow при размонтировании
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [id, currentUser, navigate]);
 
   const handleChange = (e) => {
@@ -186,7 +194,13 @@ const ProfileEdit = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: "auto", mx: 'auto', p: 3, marginTop: 5 }} className='Q-IOP'>
+    <Box sx={{ 
+      maxWidth: "auto", 
+      mx: 'auto', 
+      p: 3, 
+      marginTop: 5,
+      overflow: 'visible' // Добавляем явное разрешение скролла
+    }} className='Q-IOP'>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom sx={{ 
           fontWeight: 600,
