@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Editor from '@monaco-editor/react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchPosts } from '../../redux/slices/posts';
 import axios from '../../axios';
 import './newpost.scss';
 import Chip from '@mui/material/Chip';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Tooltip, IconButton } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const LANGUAGES = [
   'JavaScript', 'TypeScript', 'Python', 'Java', 'C#',
@@ -19,6 +22,7 @@ const Newpost = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState('');
   const [postTags, setPostTags] = useState('');
   const [description, setDescription] = useState('');
+  const [content, setContent] = useState('');
   const [drafts, setDrafts] = useState([]);
   const [loadingDrafts, setLoadingDrafts] = useState(false);
   const [selectedDraft, setSelectedDraft] = useState(null);
@@ -26,9 +30,6 @@ const Newpost = ({ isOpen, onClose }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState({ success: null, message: '' });
-  const editorRef = useRef(null);
-  const containerRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) loadDrafts();
@@ -48,44 +49,33 @@ const Newpost = ({ isOpen, onClose }) => {
     }, 500);
   };
 
-  const handleEditorDidMount = (editor) => {
-    editorRef.current = editor;
-    if (selectedDraft?.code) {
-      editor.setValue(selectedDraft.code);
-    } else {
-      editor.setValue('');
-    }
-  };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
-      setUploadStatus({ success: false, message: 'Допустимые форматы: JPEG, PNG, GIF' });
+      alert('Допустимые форматы: JPEG, PNG, GIF');
       return;
     }
 
     const maxSizeMB = 10;
     if (file.size > maxSizeMB * 1024 * 1024) {
-      setUploadStatus({ success: false, message: `Максимальный размер файла: ${maxSizeMB}MB` });
+      alert(`Максимальный размер файла: ${maxSizeMB}MB`);
       return;
     }
 
     setSelectedFile(file);
-    setUploadStatus({ success: true, message: 'Файл успешно выбран' });
   };
 
   const handleSaveDraft = () => {
-    const codeContent = editorRef.current?.getValue() || '';
     const newDraft = {
       id: Date.now(),
       title,
       postTags,
       description,
       language: selectedLanguage,
-      code: codeContent,
+      content,
       file: selectedFile?.name || null,
       createdAt: new Date().toISOString()
     };
@@ -98,76 +88,88 @@ const Newpost = ({ isOpen, onClose }) => {
 
   const handleSubmitPost = async () => {
     try {
-      if (!title.trim() || !description.trim() || !postTags.trim()) {
-        setModalMessage('Заполните все обязательные поля');
+      // 1. Валидация обязательных полей
+      if (!title.trim() || !description.trim() || !postTags.trim() || !content.trim()) {
+        setModalMessage('Заполните все обязательные поля: заголовок, описание, теги и содержимое');
         setOpenModal(true);
         return;
       }
   
+      // 2. Проверка тегов
       const tagsArray = postTags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
       if (tagsArray.length === 0) {
-        setModalMessage('Добавьте хотя бы один тег');
+        setModalMessage('Добавьте хотя бы один тег через запятую');
         setOpenModal(true);
         return;
       }
   
       setLoading(true);
-      const codeContent = editorRef.current?.getValue() || '';
-  
       let imageUrl = '';
+  
+      // 3. Загрузка изображения (если выбрано)
       if (selectedFile) {
         try {
-          setUploadStatus({ success: null, message: 'Загрузка изображения...' });
           const formData = new FormData();
           formData.append('image', selectedFile);
           
           const { data } = await axios.post('/upload', formData, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'multipart/form-data' // Важно для загрузки файлов
             }
           });
-  
-          if (data.error) throw new Error(data.error);
           
+          if (!data.url) throw new Error('Не удалось получить URL изображения');
           imageUrl = data.url;
-          setUploadStatus({ success: true, message: 'Изображение успешно загружено' });
         } catch (err) {
           console.error('Ошибка загрузки изображения:', err);
-          setUploadStatus({ 
-            success: false, 
-            message: err.response?.data?.error || 'Ошибка при загрузке изображения' 
-          });
+          setModalMessage(err.response?.data?.error || 'Ошибка при загрузке изображения');
+          setOpenModal(true);
           return;
         }
       }
   
+      // 4. Подготовка данных для отправки
       const postData = {
         title: title.trim(),
         description: description.trim(),
-        text: codeContent,
+        text: content, // Проверьте название поля на сервере!
         tags: tagsArray,
         language: selectedLanguage,
-        imageUrl: imageUrl || ''
+        imageUrl
       };
   
-      await axios.post('/posts', postData, {
+      // 5. Отправка запроса
+      const response = await axios.post('/posts', postData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      
+  
+      // 6. Проверка успешного ответа
+      if (response.status !== 201) {
+        throw new Error('Ошибка сервера при создании поста');
+      }
+  
+      // 7. Сброс формы
       setTitle('');
       setPostTags('');
       setDescription('');
+      setContent('');
       setSelectedFile(null);
       setSelectedLanguage('JavaScript');
-      setUploadStatus({ success: null, message: '' });
-      if (editorRef.current) editorRef.current.setValue('');
+      
+      // 8. Обновление списка постов и закрытие модалки
       dispatch(fetchPosts());
       onClose();
+  
     } catch (err) {
-      console.warn(err);
-      setModalMessage(err.response?.data?.error || 'Ошибка при создании поста!');
+      console.error('Полная ошибка:', err);
+      setModalMessage(
+        err.response?.data?.message || 
+        err.message || 
+        'Неизвестная ошибка при создании поста'
+      );
       setOpenModal(true);
     } finally {
       setLoading(false);
@@ -201,14 +203,16 @@ const Newpost = ({ isOpen, onClose }) => {
         </div>
       )}
       
-      <div className="code-preview">
-        <pre>{editorRef.current?.getValue() || 'Нет кода'}</pre>
+      <div className="content-preview">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
       </div>
     </div>
   );
 
   if (!isOpen) return null;
 
+  // Здесь начинается блок return
+  // ... (остальная часть компонента с JSX)
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -221,100 +225,108 @@ const Newpost = ({ isOpen, onClose }) => {
         </div>
       )}
 
-      <div className="modal-content-щ" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content-wrapper" onClick={(e) => e.stopPropagation()}>
         <div className="modal-flex-container">
-          <div className="modal-box1">
-            <input
-              className="modal-input"
-              placeholder="Заголовок*"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={120}
-            />
-            <input
-              className="modal-input"
-              placeholder="Описание* (максимум 200 символов)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              maxLength={200}
-            />
-            
-            <input
-              className="modal-input"
-              placeholder="Теги* (через запятую)"
-              value={postTags}
-              onChange={(e) => setPostTags(e.target.value)}
-            />
-
-            <select
-              className="language-selector"
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-            >
-              {LANGUAGES.map(lang => (
-                <option key={lang} value={lang}>{lang}</option>
-              ))}
-            </select>
-
-            <div className="file-upload-container">
-              <label className="file-upload-label">
-                <div className="upload-icon">
-                  <svg viewBox="0 0 24 24" width="48" height="48">
-                    <path fill="#888" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                  </svg>
-                </div>
-                <h2>Фото поста</h2>
-                <h4>Поддержка jpeg,png,gif</h4>
-                <input 
-                  type="file" 
-                  className="file-input" 
-                  onChange={handleFileChange}
-                  accept="image/jpeg, image/png, image/gif" 
-                />
+          <div className="sidebar">
+            <div className="form-group">
+              <label>
+                Заголовок*
+                <Tooltip title="Краткое и понятное название поста (макс. 120 символов)" arrow>
+                  <IconButton size="small">
+                    <HelpOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </label>
-              
-              {/* Статус загрузки файла */}
-              {uploadStatus.message && (
-                <div className={`upload-status ${uploadStatus.success === false ? 'error' : ''}`}>
-                  {uploadStatus.message}
-                </div>
-              )}
-              
-              {selectedFile && (
-                <div className="file-preview">
-                  <span className="file-name">{selectedFile.name}</span>
-                  <span className="file-size">
-                    ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                  </span>
-                </div>
-              )}
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={120}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>
+                Описание*
+                <Tooltip title="Краткое описание поста (макс. 200 символов)" arrow>
+                  <IconButton size="small">
+                    <HelpOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={200}
+                rows="3"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>
+                Теги*
+                <Tooltip title="Введите теги через запятую (например: javascript, web, react)" arrow>
+                  <IconButton size="small">
+                    <HelpOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </label>
+              <input
+                value={postTags}
+                onChange={(e) => setPostTags(e.target.value)}
+                placeholder="javascript, программирование, советы"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Язык программирования</label>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+              >
+                {LANGUAGES.map(lang => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Изображение</label>
+              <div className="file-upload">
+                <label className="upload-label">
+                  {selectedFile ? selectedFile.name : 'Выбрать файл'}
+                  <input 
+                    type="file" 
+                    onChange={handleFileChange}
+                    accept="image/jpeg, image/png, image/gif" 
+                  />
+                </label>
+                <span className="file-info">JPEG, PNG, GIF (до 10MB)</span>
+              </div>
             </div>
 
             <div className="drafts-section">
               <h3>Мои черновики</h3>
               {loadingDrafts ? (
-                <div className="draft-loading">
-                  <div className="spinner"></div>
-                </div>
+                <div className="loading">Загрузка...</div>
               ) : drafts.length === 0 ? (
-                <div className="no-drafts">Нет черновиков</div>
+                <div className="empty">Нет сохраненных черновиков</div>
               ) : (
-                <ul className="drafts-list">
+                <div className="drafts-list">
                   {drafts.map(draft => (
-                    <li 
+                    <div 
                       key={draft.id}
                       className={`draft-item ${selectedDraft?.id === draft.id ? 'active' : ''}`}
-                      onClick={() => setSelectedDraft(draft)}
+                      onClick={() => {
+                        setSelectedDraft(draft);
+                        setTitle(draft.title);
+                        setPostTags(draft.postTags);
+                        setDescription(draft.description);
+                        setContent(draft.content);
+                      }}
                     >
-                      <div className="draft-info">
-                        <h4>{draft.title || 'Без названия'}</h4>
-                        <div className="draft-meta">
-                          <span>{new Date(draft.createdAt).toLocaleDateString()}</span>
-                          <span>{draft.language}</span>
-                        </div>
-                      </div>
+                      <div className="draft-title">{draft.title || 'Без названия'}</div>
                       <button 
-                        className="delete-draft-btn"
+                        className="delete-draft"
                         onClick={(e) => {
                           e.stopPropagation();
                           setDrafts(drafts.filter(d => d.id !== draft.id));
@@ -322,57 +334,66 @@ const Newpost = ({ isOpen, onClose }) => {
                       >
                         ×
                       </button>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>
 
-<div className="modal-box2" ref={containerRef}>
-  {showPreview ? (
-    <PostPreview />
-  ) : (
-    <Editor
-      height="100%"
-      language={selectedLanguage.toLowerCase()}
-      theme="vs-dark"
-      onMount={handleEditorDidMount}
-      value={selectedDraft?.code || ''}
-      options={{
-        automaticLayout: true,
-        fontSize: 14,
-        scrollBeyondLastLine: false,
-        wordWrap: 'on',
-        minimap: { enabled: false }
-      }}
-      loading={<div style={{ color: '#fff' }}>Загрузка редактора...</div>}
-    />
-  )}
+          <div className="editor-area">
+            {showPreview ? (
+              <PostPreview />
+            ) : (
+              <div className="markdown-editor">
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="->> Напишите тут текст с использованием Markdown..."
+                  rows="20"
+                />
+               <div className="markdown-tips">
+  <h4>Подсказки по Markdown:</h4>
+  <ul>
+    <li><code># Заголовок 1</code></li>
+    <li><code>## Заголовок 2</code></li>
+    <li><code>**Жирный текст**</code></li>
+    <li><code>*Курсив*</code> или <code>_Курсив_</code></li>
+    <li><code>~~Зачеркнутый~~</code></li>
+    <li><code>`Встроенный код`</code></li>
+    <li><code>``` Блок кода ```</code></li>
+    <li><code>- Неупорядоченный список</code></li>
+    <li><code>1. Упорядоченный список</code></li>
+    <li><code>[Ссылка](https://example.com)</code></li>
+    <li><code>![Изображение](alt-text.jpg)</code></li>
+    <li><code>---</code> Горизонтальная линия</li>
+    <li><code>| Таблица | Синтаксис |</code></li>
+    <li><code>|--------|----------|</code></li>
+    <li><code>| Ячейка | Пример   |</code></li>
+  </ul>
+  <div className="advanced-tips">
+    <p>Подсказка: Используйте Tab для отступов кода</p>
+    <p>Поддерживается подсветка синтаксиса для 150+ языков</p>
+  </div>
 </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="action-buttons">
-        <button 
-  className="preview-btn" 
-  onClick={() => setShowPreview(!showPreview)}
->
-  {showPreview ? 'Редактировать' : 'Предпросмотр'}
-</button>
-          <button className="cancel-btn" onClick={onClose}>
-            Отменить
-          </button>
+        <div className="actions">
           <button 
-            className="draft-btn" 
-            onClick={handleSaveDraft}
-            disabled={loadingDrafts}
+            className="preview-btn"
+            onClick={() => setShowPreview(!showPreview)}
           >
-            Сохранить черновик
+            {showPreview ? 'Редактировать' : 'Предпросмотр'}
           </button>
+          <button className="cancel" onClick={onClose}>Отмена</button>
+          <button className="save-draft" onClick={handleSaveDraft}>Сохранить черновик</button>
           <button 
-            className="submit-btnl" 
+            className="submit"
             onClick={handleSubmitPost}
-            disabled={isLoading || (uploadStatus.success === false)}
+            disabled={isLoading}
           >
             {isLoading ? 'Публикация...' : 'Опубликовать'}
           </button>
